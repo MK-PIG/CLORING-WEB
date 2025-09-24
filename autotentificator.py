@@ -6,7 +6,7 @@ class Autotentificator:
     def __repr__(self):
         return f'Class Autotentificator'
 
-    def find_user() -> bool:
+    def find_user(self) -> bool:
         pass
 
 

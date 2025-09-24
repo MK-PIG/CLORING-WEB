@@ -12,7 +12,7 @@
 </head>
 
 <body class="page">
-    <form class="form" action="{{url_for('registrator')}}" method="post">
+    <form class="form" action="{{url_for('testor_form')}}" method="post">
         <div class="wrapper">
             <h1 class="title">cloring</h1>
             <p class="subtitle">Введите ваши данные для входа в систему</p>
@@ -25,7 +25,7 @@
             <div class="password_wrapper">
                 <label for="password">Пароль</label>
                 <div class="password_input">
-                    <input type="text" id="password" name="password" placeholder="Введите ваш пароль">
+                    <input type="password" id="password" name="password" placeholder="Введите ваш пароль">
                 </div>
             </div>
             <button class="login_button" type="submit">Войти</button>

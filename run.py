@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for, request
 
 app = Flask(__name__)
 
@@ -6,6 +6,12 @@ app = Flask(__name__)
 @app.route('/sign_in')
 def sign_in():
     return render_template('sign_in.html')
+
+
+@app.route('/testor_form', methods=['POST'])
+def testor_form():
+
+    return render_template('testor_form.html', requests=request.form)
 
 
 if __name__ == '__main__':

@@ -10,8 +10,12 @@ def sign_in():
 
 @app.route('/testor_form', methods=['POST'])
 def testor_form():
-
     return render_template('testor_form.html', requests=request.form)
+
+
+@app.route('/registration')
+def registration():
+    return render_template('registration.html')
 
 
 if __name__ == '__main__':

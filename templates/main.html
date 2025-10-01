@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLORING - стиль без границ, планета без отходов</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- фавиконки для разных устройств -->
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="manifest" href="data:application/json,{}">
+    <meta name="theme-color" content="#2e8b57">
+
+
+
+
+    <!-- тут css начинается -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* шапка */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3e56;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #88a998;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #e1d2a9;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-left: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-support {
+            background-color: #f78659;
+            color: white;
+            border: 1px solid #f78659;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            color: #2e8b57;
+            border: 1px solid #88a998;
+        }
+
+        .btn-register {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* основной баннер */
+        .hero {
+            background: linear-gradient(135deg, #88a998 0%, #c3d8cb 100%);
+            color: white;
+            padding: 180px 0 120px;
+            text-align: center;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-family: 'FreeMono';
+            font-size: 52px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-weight: 500;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: #2d3e56;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+
+
+        /* штучки на баннере */
+        .banner-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .tshirt-icon {
+            position: absolute;
+            font-size: 120px;
+            top: 20%;
+            left: 10%;
+            opacity: 0.2;
+            color: white;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .recycle-icon {
+            position: absolute;
+            font-size: 100px;
+            bottom: 15%;
+            right: 10%;
+            opacity: 0.2;
+            color: white;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+
+
+
+        /* карточки снизу */
+        .description {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .description h2 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            color: #422b21;
+        }
+
+        .description-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .description-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .description-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 50px;
+            color: #e7993f;
+            margin-bottom: 20px;
+            background: #f2e9ce;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .description-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #e7993f;
+        }
+
+        .description-card p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+
+
+
+        /* подвальчик */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+
+
+
+
+
+
+        /* адаптивность для других устройств */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo {
+                position: static;
+                transform: none;
+                margin-bottom: 10px;
+            }
+
+            nav ul {
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 120px 0 80px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .auth-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .btn {
+                margin: 5px;
+            }
+
+            .tshirt-icon,
+            .recycle-icon {
+                font-size: 60px;
+            }
+
+            .description-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .tshirt-icon,
+            .recycle-icon {
+                display: none;
+            }
+
+            .description-card {
+                padding: 20px;
+            }
+
+            .card-icon {
+                font-size: 40px;
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+
+
+
+
+
+
+<body>
+    <!-- шапка -->
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="#">О нас</a></li>
+                    <li><a href="#">Каталог</a></li>
+                </ul>
+            </nav>
+
+            <div class="logo">CLORING</div>
+
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-support">Поддержать проект</a>
+                <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
+                <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- баннер -->
+    <section class="hero">
+        <div class="banner-elements">
+
+            <!-- иконки, которые двигаются -->
+            <i class="fas fa-tshirt tshirt-icon"></i>
+            <i class="fas fa-recycle recycle-icon"></i>
+        </div>
+
+
+        <div class="hero-content">
+            <h1>CLORING<br><span style="font-size: 0.7em; font-family: 'Montserrat', sans-serif;">стиль без границ,
+                    планета без отходов</span></h1>
+            <p>Платформа для обмена одеждой, где ваш стиль помогает сохранить планету</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Начать обмен</a>
+                <a href="#" class="btn btn-secondary">Узнать больше</a>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- карточки, которые снизу -->
+    <section class="description">
+        <h2>Как это работает?</h2>
+        <div class="description-cards">
+            <div class="description-card">
+                <div class="card-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3>Регистрация и анкета</h3>
+                <p>После регистрации на нашем сайте Вам откроется возможность заполнить анкету своей одежды, разместив
+                    фотографии, указав размер и категорию товара.</p>
+            </div>
+
+            <div class="description-card">
+                <div class="card-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3>Модерация</h3>
+                <p>После заполнения анкеты она отправляется на рассмотрение модератору. Если вещь подходит для
+                    размещения на нашем сервисе статус меняется на "одобрено", иначе - "отклонено".</p>
+            </div>
+
+            <div class="description-card">
+                <div class="card-icon">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <h3>???</h3>
+                <p>тут про то, как будет производиться обмен между людьми</p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <!-- подвал сайта -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 CLORING. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

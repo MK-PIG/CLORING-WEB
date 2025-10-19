@@ -1,0 +1,66 @@
+import sqlite3 as sq
+
+
+class DateBase:
+    def __init__(self, db_path="./datebase.db") -> None:
+        self.db_path = db_path
+
+    def __repr__(self) -> str:
+        return 'Class DateBase'
+
+    # Возможно стоит возвращать True при успехе, False при исключении?
+    def create_users_table(self) -> None:
+        """
+        Создает таблицу users с ниже указаннами полями, если она не сущ, иначе ничего не делает
+        """
+        with sq.connect(self.db_path) as con:
+            cursor = con.cursor()
+            cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+                            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            email TEXT NOT NULL,
+                            password TEXT NOT NULL)""")
+
+    def select(self, fields: str, table_name: str, where: str = '') -> list:
+        """Делает выборку полей fields из таблицы table_name с доп условием где where
+
+        Args:
+            fields (str): поля для выборки
+            table_name (str): имя таблицы
+            where (str, optional): условие выбора полей если сущ. Defaults to ''.
+
+        Returns:
+            list: список кортежей значений (но это не точно)
+        """
+        with sq.connect(self.db_path) as con:
+            cursor = con.cursor()
+            if where:
+                request = f'SELECT {fields} from {table_name} WHERE {where}'
+                cursor.execute(request)
+            else:
+                request = f'SELECT {fields} from {table_name}'
+                cursor.execute(request)
+
+            return cursor.fetchall()
+
+    def insert(self, table_name: str, fields: str, values: str) -> None:
+        """Вставляет запись в таблицу
+
+        Args:
+            table_name (str): имя таблицы
+            fields (str): поля таблицы
+            values (str): значения полей
+        """
+        with sq.connect(self.db_path) as con:
+            cursor = con.cursor()
+            request = f'INSERT INTO {table_name} ({fields}) VALUES({values})'
+            cursor.execute(request)
+
+    def create_table_catalog(self):
+        pass
+
+
+if __name__ == '__main__':
+    base = DateBase()
+    base.create_users_table()
+    base.select('email, password', 'users', 'email == "some@com.ru"')
+    base.insert('users', 'email, password', '"some@com.ru", "lala"')

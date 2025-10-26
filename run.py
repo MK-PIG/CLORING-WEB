@@ -16,7 +16,9 @@ def sign_in():
     if request.method == 'POST':
         try:
             if aut.find_user(request.form['email'], request.form['password']):
-                return redirect(url_for('testor_form', msg='Вы авторизованы'))
+                usename = request.form['email'].split('@')[0]
+                email = request.form['email']
+                return redirect(url_for('profile', username=usename, email=email))
             else:
                 return render_template('sign_in.html', e="Неверный email или пароль")
         except ValueError as e:
@@ -25,18 +27,15 @@ def sign_in():
     return render_template('sign_in.html')
 
 
-@app.route('/testor_form/<msg>', methods=['POST', 'GET'])
-def testor_form(msg):
-    return render_template('testor_form.html', msg=msg)
-
-
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     if request.method == 'POST':
         try:
             if rg.check_correction_email(request.form['email']) and rg.find_user(request.form['email'], request.form['password']) == False:
                 if rg.reg(request.form['email'], request.form['password']):
-                    return redirect(url_for('testor_form', msg='Вы зарегистрированы'))
+                    usename = request.form['email'].split('@')[0]
+                    email = request.form['email']
+                    return redirect(url_for(f'profile/{usename}', username=usename, email=email))
         except ValueError as erorr:
             # добавить вывод ошибки в форму регистрации
             return render_template('registration.html', erorr=erorr)
@@ -47,6 +46,12 @@ def registration():
 @app.route('/')
 def main():
     return render_template('main.html')
+
+
+@app.route('/profile/<username>')
+def profile(username):
+
+    return render_template('user_account.html', username=username)
 
 
 if __name__ == '__main__':

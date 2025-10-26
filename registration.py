@@ -25,13 +25,14 @@ class Registartor:
         Returns:
             bool: 
         """
+        # если пользователь вводит верный пароль и email то его можно просто авторизовывать
         rows = base.select('email, password', 'users', f'email == "{email}"')
         if not rows:
             return False
         for em, psw in rows:
             if em == email and psw == password:
                 return True
-            if em == email and psw != password:
+            if em == email:
                 raise ValueError("Пользователь с таким email уже существует")
 
     def reg(self, email: str, password: str) -> bool:  # type: ignore

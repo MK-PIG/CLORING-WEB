@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- фавиконки для разных устройств -->
-    <link rel="apple-touch-icon" sizes="180x180"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
-    <link rel="icon" type="image/png"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
     <link rel="manifest" href="data:application/json,{}">
     <meta name="theme-color" content="#2e8b57">
+    
 
-
-    <!-- тут css начинается -->
+<!-- тут css начинается -->
     <style>
         * {
             margin: 0;
@@ -28,25 +23,25 @@
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
         }
-
+        
         body {
             background-color: #f5f5f5;
             color: #333;
             line-height: 1.6;
             overflow-x: hidden;
         }
-
+        
         /* шапка */
         header {
             background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 15px 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
         }
-
+        
         .container {
             width: 90%;
             max-width: 1200px;
@@ -55,7 +50,7 @@
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .logo {
             font-size: 28px;
             font-weight: bold;
@@ -64,32 +59,32 @@
             left: 50%;
             transform: translateX(-50%);
         }
-
+        
         nav ul {
             display: flex;
             list-style: none;
         }
-
+        
         nav ul li {
             margin-right: 20px;
         }
-
+        
         nav ul li a {
             text-decoration: none;
             color: #88a998;
             font-weight: 500;
             transition: color 0.3s;
         }
-
+        
         nav ul li a:hover {
             color: #e1d2a9;
         }
-
+        
         .auth-buttons {
             display: flex;
             align-items: center;
         }
-
+        
         .btn {
             padding: 8px 15px;
             border-radius: 4px;
@@ -100,31 +95,19 @@
             border: none;
             cursor: pointer;
         }
-
+        
         .btn-support {
             background-color: #f78659;
             color: white;
             border: 1px solid #f78659;
         }
-
-        .btn-login {
+	.btn-login {
             background-color: transparent;
             color: #2e8b57;
-            border: 1px solid #88a998;
+            border: 1px solid #2e8b57;
         }
 
-        .btn-register {
-            background-color: #88a998;
-            color: white;
-            border: 1px solid #88a998;
-        }
-
-        .btn-profile {
-            background-color: #88a998;
-            color: white;
-            border: 1px solid #88a998;
-        }
-
+        
         .btn-primary {
             background-color: #88a998;
             color: white;
@@ -133,36 +116,36 @@
             border-radius: 6px;
             font-weight: 500;
         }
-
+        
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
+        
         /* основной баннер */
         .dashboard {
             margin-top: 80px;
             padding: 40px 0;
         }
-
+        
         .dashboard-header {
             text-align: center;
             margin-bottom: 40px;
         }
-
+        
         .dashboard-header h1 {
             font-family: 'Free Mono';
             font-size: 42px;
             color: #2d3e56;
             margin-bottom: 10px;
         }
-
+        
         .dashboard-header p {
             font-size: 18px;
             color: #666;
         }
-
+        
         .dashboard-content {
             display: grid;
             grid-template-columns: 300px 1fr;
@@ -171,22 +154,22 @@
             margin: 0 auto;
             padding: 0 20px;
         }
-
+        
         /* боковая панель */
         .sidebar {
             background: white;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-
+        
         .user-info {
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-
+        
         .user-avatar {
             width: 80px;
             height: 80px;
@@ -200,32 +183,32 @@
             color: #2d3e56;
             overflow: hidden;
         }
-
+        
         .user-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
+        
         .user-name {
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 5px;
         }
-
+        
         .user-email {
             color: #666;
             font-size: 14px;
         }
-
+        
         .sidebar-menu {
             list-style: none;
         }
-
+        
         .sidebar-menu li {
             margin-bottom: 10px;
         }
-
+        
         .sidebar-menu a {
             display: flex;
             align-items: center;
@@ -235,70 +218,78 @@
             border-radius: 8px;
             transition: all 0.3s;
         }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
             background: #88a998;
             color: #fff;
         }
-
+        
         .sidebar-menu i {
             margin-right: 10px;
             width: 20px;
             text-align: center;
         }
-
+        
         /* часть с одеждой */
         .main-content {
             display: flex;
             flex-direction: column;
             gap: 30px;
         }
-
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
+        
         .stat-card {
             background: white;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: transform 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-
+        
         .stat-card:hover {
             transform: translateY(-5px);
         }
-
+        
+        .stat-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
         .stat-icon {
             font-size: 30px;
             color: #88a998;
-            margin-bottom: 15px;
         }
-
+        
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
         .stat-value {
-            font-size: 28px;
+            font-size: 36px;
             font-weight: 700;
             color: #2d3e56;
-            margin-bottom: 5px;
+            line-height: 1;
         }
-
+        
         .stat-label {
             font-size: 14px;
             color: #666;
+            margin-top: 5px;
         }
 
+        
         .content-section {
             background: white;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-
+        
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -307,30 +298,30 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
-
+        
         .section-title {
             font-size: 22px;
             font-weight: 600;
             color: #f78659;
         }
-
+        
         .items-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
         }
-
+        
         .item-card {
             background: #f9f9f9;
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s;
         }
-
+        
         .item-card:hover {
             transform: translateY(-3px);
         }
-
+        
         .item-image {
             height: 150px;
             background: #dfe8e3;
@@ -341,44 +332,44 @@
             font-size: 40px;
             overflow: hidden;
         }
-
+        
         .item-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
+        
         .item-info {
             padding: 15px;
         }
-
+        
         .item-name {
             font-weight: 600;
             margin-bottom: 5px;
         }
-
+        
         .item-status {
             font-size: 12px;
             padding: 3px 8px;
             border-radius: 4px;
             display: inline-block;
         }
-
+        
         .status-approved {
             background: #e8f5e9;
             color: #2e8b57;
         }
-
+        
         .status-pending {
             background: #fff3cd;
             color: #856404;
         }
-
+        
         .status-rejected {
             background: #f8d7da;
             color: #721c24;
         }
-
+        
         /* подвал мухехехе */
         footer {
             background-color: #333;
@@ -387,82 +378,218 @@
             text-align: center;
             margin-top: 60px;
         }
-
+        
         .footer-content {
             width: 90%;
             max-width: 1200px;
             margin: 0 auto;
             text-align: center;
         }
-
+        
         /* адаптивность */
         @media (max-width: 968px) {
             .dashboard-content {
                 grid-template-columns: 1fr;
             }
-
+            
             .sidebar {
                 order: 2;
             }
-
+            
             .stats-cards {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
-
+        
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
                 text-align: center;
             }
-
+            
             .logo {
                 position: static;
                 transform: none;
                 margin-bottom: 10px;
             }
-
+            
             nav ul {
                 margin-bottom: 15px;
                 justify-content: center;
             }
-
+            
             .auth-buttons {
                 flex-wrap: wrap;
                 justify-content: center;
             }
-
+            
             .btn {
                 margin: 5px;
             }
-
+            
             .stats-cards {
                 grid-template-columns: repeat(2, 1fr);
             }
-
+            
             .items-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
-
+        
         @media (max-width: 480px) {
             .stats-cards {
                 grid-template-columns: 1fr;
             }
-
+            
             .items-grid {
                 grid-template-columns: 1fr;
             }
         }
+
+
+        
+        /* Модальное окно настроек */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3e56;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #f78659;
+        }
+        
+        .avatar-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 3px solid #fff;
+        }
+        
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-upload-btn {
+            background: #f78659;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .avatar-upload-btn:hover {
+            background: #f5632a;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .btn-save {
+            background: #f78659;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
     </style>
 </head>
 
 
 
 
-
-
 <!-- тут хтмл начинается -->
+
 
 <body>
     <!-- шапка -->
@@ -470,17 +597,16 @@
         <div class="container">
             <nav>
                 <ul>
-                    <li><a href="{{url_for('main')}}">Главная</a></li>
+                    <li><a href="mainpage.html">Главная</a></li>
                     <li><a href="catalog.html">Каталог</a></li>
                     <li><a href="about.html">О нас</a></li>
                 </ul>
             </nav>
-
+            
             <div class="logo">CLORING</div>
-
+            
             <div class="auth-buttons">
                 <a href="#" class="btn btn-support">Поддержать проект</a>
-                <a href="#" class="btn btn-profile"><i class="fas fa-user"></i> Профиль</a>
                 <a href="#" class="btn btn-login">Выйти</a>
             </div>
         </div>
@@ -490,75 +616,60 @@
     <section class="dashboard">
         <div class="dashboard-header">
             <h1>Личный кабинет</h1>
-            <p>управляйте обменом и отслеживайте статусы</p>
+            <p>yправляйте своими вещами и отслеживайте статусы</p>
         </div>
-
+        
         <div class="dashboard-content">
+
             <!-- боковая панель -->
             <div class="sidebar">
                 <div class="user-info">
                     <div class="user-avatar">
-                        <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613"
-                            alt="MK PIG">
+                        <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613" alt="MK PIG">
                     </div>
-                    <div class="user-name">{{username}}</div>
-                    <div class="user-email">{{email}}</div>
+                    <div class="user-name">MK PIG</div>
+                    <div class="user-email">mkpig@mail.ru</div>
                 </div>
-
+                
                 <ul class="sidebar-menu">
-                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i>Главное</a></li>
-                    <li><a href="#"><i class="fas fa-tshirt"></i> Мои вещи</a></li>
-                    <li><a href="#"><i class="fas fa-shopping-cart"></i> Мои заказы</a></li>
-                    <li><a href="#"><i class="fas fa-cog"></i> Настройки</a></li>
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Главная</a></li>
+                    <li><a href="#" id="settings-btn"><i class="fas fa-cog"></i> Настройки</a></li>
                 </ul>
             </div>
-
+            
             <!-- мейн -->
             <div class="main-content">
-                <div class="stats-cards">
-                    <div class="stat-card">
+                <div class="stat-card">
+                    <div class="stat-left">
                         <div class="stat-icon">
                             <i class="fas fa-tshirt"></i>
                         </div>
-                        <div class="stat-value">11</div>
-                        <div class="stat-label">Всего вещей</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
+                        <div class="stat-info">
+                            <div class="stat-label">Всего вещей</div>
                         </div>
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">Одобрено</div>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">Заказов</div>
-                    </div>
+                    <div class="stat-value">11</div>
                 </div>
+
+                
 
                 <div class="content-section">
                     <div class="section-header">
                         <div class="section-title">Последние вещи</div>
                         <a href="#" class="btn btn-primary">Добавить вещь</a>
                     </div>
-
+                    
                     <div class="items-grid">
                         <div class="item-card">
                             <div class="item-image">
-                                <img src="https://avatars.mds.yandex.net/i?id=4f37e93176fc236a5c6a5d852046ce01_l-5235948-images-thumbs&n=13"
-                                    alt="Синее платье">
+                                <img src="https://avatars.mds.yandex.net/i?id=4f37e93176fc236a5c6a5d852046ce01_l-5235948-images-thumbs&n=13" alt="Синее платье">
                             </div>
                             <div class="item-info">
                                 <div class="item-name">Синее платье</div>
                                 <span class="item-status status-approved">Одобрено</span>
                             </div>
                         </div>
-
+                        
                         <div class="item-card">
                             <div class="item-image">
                                 <i class="fas fa-tshirt"></i>
@@ -568,7 +679,7 @@
                                 <span class="item-status status-pending">На модерации</span>
                             </div>
                         </div>
-
+                        
                         <div class="item-card">
                             <div class="item-image">
                                 <i class="fas fa-tshirt"></i>
@@ -578,11 +689,10 @@
                                 <span class="item-status status-approved">Одобрено</span>
                             </div>
                         </div>
-
+                        
                         <div class="item-card">
                             <div class="item-image">
-                                <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg"
-                                    alt="Красная блузка">
+                                <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg" alt="Красная блузка">
                             </div>
                             <div class="item-info">
                                 <div class="item-name">Красная блузка</div>
@@ -595,12 +705,105 @@
         </div>
     </section>
 
-    <!-- подвал -->
+
+
+
+    <!-- окно настроек -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <h2 class="modal-title">Настройки профиля</h2>
+            
+            <div class="avatar-upload">
+                <div class="avatar-preview">
+                    <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613" alt="Текущий аватар" id="current-avatar">
+                </div>
+                <button class="avatar-upload-btn" id="upload-avatar">Изменить аватар</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="user-email">Электронная почта</label>
+                <input type="email" class="form-input" id="user-email" value="mkpig@mail.ru">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="user-phone">Номер телефона</label>
+                <input type="tel" class="form-input" id="user-phone" value="+7 (900) 000-00-00">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancel-btn">Отмена</button>
+                <button class="btn-save" id="save-btn">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Футер -->
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 CLORING. Все права защищены.</p>
         </div>
     </footer>
-</body>
 
+
+
+
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const modalClose = document.getElementById('modal-close');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const uploadAvatarBtn = document.getElementById('upload-avatar');
+            const currentAvatar = document.getElementById('current-avatar');
+            
+
+            settingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                settingsModal.style.display = 'flex';
+            });
+            
+
+            function closeModal() {
+                settingsModal.style.display = 'none';
+            }
+            
+            modalClose.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+            
+
+            settingsModal.addEventListener('click', function(e) {
+                if (e.target === settingsModal) {
+                    closeModal();
+                }
+            });
+            
+
+            saveBtn.addEventListener('click', function() {
+                const email = document.getElementById('user-email').value;
+                const phone = document.getElementById('user-phone').value;
+                
+
+                alert('Настройки успешно сохранены!');
+                closeModal();
+            });
+            
+
+            uploadAvatarBtn.addEventListener('click', function() {
+                const newAvatarUrl = 'https://avatars.mds.yandex.net/i?id=d7454a2093cc96c971aec205a6ecdebf_l-4904517-images-thumbs&n=13';
+                currentAvatar.src = newAvatarUrl;
+                alert('Аватар успешно изменен!');
+            });
+        });
+    </script>
+</body>
 </html>

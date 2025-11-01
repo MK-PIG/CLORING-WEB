@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, g, session, redirect
+from flask import Flask, render_template, url_for, request, session, redirect
 from registration import Registartor
 from db import DateBase
 from autotentification import Autotentificator
@@ -13,12 +13,17 @@ base.create_users_table()
 
 @app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
+
+    if 'userLogged' in session:
+        return redirect(url_for('profile', username=session['userLogged']))
+
     if request.method == 'POST':
         try:
             if aut.find_user(request.form['email'], request.form['password']):
-                usename = request.form['email'].split('@')[0]
+                session['userLogged'] = request.form['email']
+                username = request.form['email'].split('@')[0]
                 email = request.form['email']
-                return redirect(url_for('profile', username=usename, email=email))
+                return redirect(url_for('profile', username=username, email=email))
             else:
                 return render_template('sign_in.html', e="Неверный email или пароль")
         except ValueError as e:
@@ -45,13 +50,20 @@ def registration():
 
 @app.route('/')
 def main():
+    print('main')
     return render_template('main.html')
 
 
 @app.route('/profile/<username>')
 def profile(username):
-
     return render_template('user_account.html', username=username)
+
+
+@app.route('/logout')
+def logout():
+    print('logout')
+    session.pop('userLogged', None)
+    return render_template('main.html')
 
 
 if __name__ == '__main__':

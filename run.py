@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, session, redirect
+from flask import Flask, jsonify, render_template, url_for, request, session, redirect, abort
 from registration import Registartor
 from db import DateBase
 from autotentification import Autotentificator
@@ -15,15 +15,14 @@ base.create_users_table()
 def sign_in():
 
     if 'userLogged' in session:
-        return redirect(url_for('profile', username=session['userLogged']))
+        return redirect(url_for('profile', email=session['userLogged']))
 
     if request.method == 'POST':
         try:
             if aut.find_user(request.form['email'], request.form['password']):
                 session['userLogged'] = request.form['email']
-                username = request.form['email'].split('@')[0]
                 email = request.form['email']
-                return redirect(url_for('profile', username=username, email=email))
+                return redirect(url_for('profile', email=email))
             else:
                 return render_template('sign_in.html', e="Неверный email или пароль")
         except ValueError as e:
@@ -38,11 +37,11 @@ def registration():
         try:
             if rg.check_correction_email(request.form['email']) and rg.find_user(request.form['email'], request.form['password']) == False:
                 if rg.reg(request.form['email'], request.form['password']):
-                    usename = request.form['email'].split('@')[0]
+                    # username = request.form['email'].split('@')[0]
+                    session['userLogged'] = request.form['email']
                     email = request.form['email']
-                    return redirect(url_for(f'profile/{usename}', username=usename, email=email))
+                    return redirect(url_for(f'profile', email=email))
         except ValueError as erorr:
-            # добавить вывод ошибки в форму регистрации
             return render_template('registration.html', erorr=erorr)
 
     return render_template('registration.html')
@@ -54,9 +53,48 @@ def main():
     return render_template('main.html')
 
 
-@app.route('/profile/<username>')
-def profile(username):
-    return render_template('user_account.html', username=username)
+@app.route('/profile/<email>')
+def profile(email):
+    # если пользователь не в сессии - то не даем юзеру доступ к изменению url
+    if 'userLogged' not in session or session['userLogged'] != email:
+        abort(401)
+    if 'phone_number' in session:
+        phone_number = session['phone_number']
+    else:
+        phone_number = ''
+
+    username = email.split('@')[0]
+    return render_template('user_account.html', email=email, username=username, phone_number=phone_number)
+
+
+@app.route('/profile/update', methods=['POST'])
+def update_profile():
+    try:
+        old_email = session.get('userLogged')
+        new_email = request.form.get('email')
+        phone_number = request.form.get('phone')
+
+        # Валидация данных
+        if not new_email or not phone_number:
+            return jsonify({'success': False, 'error': 'Все поля обязательны'})
+
+        # Здесь сохраняем в базу данных
+        result_of_operation = base.update_table('users', ['email', 'phone_number'], [
+            f'"{new_email}"', f'"{phone_number}"'], f'email="{old_email}"')
+
+        if result_of_operation:
+            session['userLogged'] = new_email
+            session['phone_number'] = phone_number
+
+        return jsonify({
+            'success': True,
+            'message': 'Профиль обновлен',
+            'email': new_email,
+            'phone': phone_number
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @app.route('/logout')

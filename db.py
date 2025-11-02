@@ -1,5 +1,9 @@
 import sqlite3 as sq
 
+"""
+добавить в функции return bool после execute
+"""
+
 
 class DateBase:
     def __init__(self, db_path="./datebase.db") -> None:
@@ -18,7 +22,8 @@ class DateBase:
             cursor.execute("""CREATE TABLE IF NOT EXISTS users (
                             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                             email TEXT NOT NULL,
-                            password TEXT NOT NULL)""")
+                            password TEXT NOT NULL,
+                            phone_number TEXT NULL )""")
 
     def select(self, fields: str, table_name: str, where: str = '') -> list:
         """Делает выборку полей fields из таблицы table_name с доп условием где where
@@ -55,6 +60,21 @@ class DateBase:
             request = f'INSERT INTO {table_name} ({fields}) VALUES({values})'
             cursor.execute(request)
 
+    def update_table(self, table_name: str, fields: list, new_values: list, condition: str = '') -> bool:
+        try:
+            with sq.connect(self.db_path) as con:
+                cursor = con.cursor()
+                request = f'UPDATE {table_name} SET '
+                for field, value in zip(fields, new_values):
+                    request += f'{field}={value},'
+                request = request[:-1]
+                if condition:
+                    request += f' WHERE {condition}'
+                cursor.execute(request)
+                return True
+        except Exception:
+            return False
+
     def create_table_catalog(self):
         pass
 
@@ -62,5 +82,6 @@ class DateBase:
 if __name__ == '__main__':
     base = DateBase()
     base.create_users_table()
-    base.select('email, password', 'users', 'email == "some@com.ru"')
     base.insert('users', 'email, password', '"some@com.ru", "lala"')
+    base.update_table('users', ['email', 'phone_number'], [
+                      '"2904yr@mail.ru"', '"8-985-697-02-47"'], '"email"="some@com.ru"')

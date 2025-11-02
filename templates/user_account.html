@@ -110,20 +110,9 @@
         .btn-login {
             background-color: transparent;
             color: #2e8b57;
-            border: 1px solid #88a998;
+            border: 1px solid #2e8b57;
         }
 
-        .btn-register {
-            background-color: #88a998;
-            color: white;
-            border: 1px solid #88a998;
-        }
-
-        .btn-profile {
-            background-color: #88a998;
-            color: white;
-            border: 1px solid #88a998;
-        }
 
         .btn-primary {
             background-color: #88a998;
@@ -255,42 +244,51 @@
             gap: 30px;
         }
 
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
         .stat-card {
             background: white;
             border-radius: 10px;
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
             transition: transform 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
         }
 
+        .stat-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .stat-icon {
             font-size: 30px;
             color: #88a998;
-            margin-bottom: 15px;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
         }
 
         .stat-value {
-            font-size: 28px;
+            font-size: 36px;
             font-weight: 700;
             color: #2d3e56;
-            margin-bottom: 5px;
+            line-height: 1;
         }
 
         .stat-label {
             font-size: 14px;
             color: #666;
+            margin-top: 5px;
         }
+
 
         .content-section {
             background: white;
@@ -454,15 +452,150 @@
                 grid-template-columns: 1fr;
             }
         }
+
+
+
+        /* Модальное окно настроек */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3e56;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #f78659;
+        }
+
+        .avatar-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 3px solid #fff;
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-btn {
+            background: #f78659;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .avatar-upload-btn:hover {
+            background: #f5632a;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: #f78659;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 
 
 
-
-
 <!-- тут хтмл начинается -->
+
 
 <body>
     <!-- шапка -->
@@ -482,6 +615,7 @@
                 <a href="#" class="btn btn-support">Поддержать проект</a>
                 <a href="#" class="btn btn-profile"><i class="fas fa-user"></i> Профиль</a>
                 <a href="{{url_for('logout')}}" class="btn btn-login">Выйти</a>
+
             </div>
         </div>
     </header>
@@ -490,10 +624,11 @@
     <section class="dashboard">
         <div class="dashboard-header">
             <h1>Личный кабинет</h1>
-            <p>управляйте обменом и отслеживайте статусы</p>
+            <p>yправляйте своими вещами и отслеживайте статусы</p>
         </div>
 
         <div class="dashboard-content">
+
             <!-- боковая панель -->
             <div class="sidebar">
                 <div class="user-info">
@@ -506,40 +641,26 @@
                 </div>
 
                 <ul class="sidebar-menu">
-                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i>Главное</a></li>
-                    <li><a href="#"><i class="fas fa-tshirt"></i> Мои вещи</a></li>
-                    <li><a href="#"><i class="fas fa-shopping-cart"></i> Мои заказы</a></li>
-                    <li><a href="#"><i class="fas fa-cog"></i> Настройки</a></li>
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Главная</a></li>
+                    <li><a href="#" id="settings-btn"><i class="fas fa-cog"></i> Настройки</a></li>
                 </ul>
             </div>
 
             <!-- мейн -->
             <div class="main-content">
-                <div class="stats-cards">
-                    <div class="stat-card">
+                <div class="stat-card">
+                    <div class="stat-left">
                         <div class="stat-icon">
                             <i class="fas fa-tshirt"></i>
                         </div>
-                        <div class="stat-value">11</div>
-                        <div class="stat-label">Всего вещей</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
+                        <div class="stat-info">
+                            <div class="stat-label">Всего вещей</div>
                         </div>
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">Одобрено</div>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">Заказов</div>
-                    </div>
+                    <div class="stat-value">11</div>
                 </div>
+
+
 
                 <div class="content-section">
                     <div class="section-header">
@@ -595,12 +716,168 @@
         </div>
     </section>
 
-    <!-- подвал -->
+
+
+
+    <!-- окно настроек -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <h2 class="modal-title">Настройки профиля</h2>
+
+            <div class="avatar-upload">
+                <div class="avatar-preview">
+                    <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613"
+                        alt="Текущий аватар" id="current-avatar">
+                </div>
+                <button class="avatar-upload-btn" id="upload-avatar">Изменить аватар</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="user-email">Электронная почта</label>
+                <!--В value записывать значени почты юзера-->
+                <input type="email" class="form-input" id="user-email" value={{email}}> <!--{{email}}-->
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="user-phone">Номер телефона</label> <!--{{phone_number}}-->
+                <input type="tel" class="form-input" id="user-phone" value={{phone_number}}>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancel-btn">Отмена</button>
+                <button class="btn-save" id="save-btn">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Футер -->
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 CLORING. Все права защищены.</p>
         </div>
     </footer>
+
+
+
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const modalClose = document.getElementById('modal-close');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const uploadAvatarBtn = document.getElementById('upload-avatar');
+            const currentAvatar = document.getElementById('current-avatar');
+
+            // Добавляем input для загрузки файла (если его еще нет в HTML)
+            const avatarInput = document.createElement('input');
+            avatarInput.type = 'file';
+            avatarInput.id = 'avatar-input';
+            avatarInput.name = 'avatar';
+            avatarInput.accept = 'image/*';
+            avatarInput.style.display = 'none';
+            document.body.appendChild(avatarInput);
+
+            settingsBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                settingsModal.style.display = 'flex';
+            });
+
+            function closeModal() {
+                settingsModal.style.display = 'none';
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+
+            settingsModal.addEventListener('click', function (e) {
+                if (e.target === settingsModal) {
+                    closeModal();
+                }
+            });
+
+            // Обработчик сохранения формы
+            saveBtn.addEventListener('click', function () {
+                const email = document.getElementById('user-email').value;
+                const phone = document.getElementById('user-phone').value;
+                const avatarFile = avatarInput.files[0];
+
+                // Создаем FormData для отправки
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('phone', phone);
+
+                if (avatarFile) {
+                    formData.append('avatar', avatarFile);
+                }
+
+                // Отправляем данные на сервер
+                fetch('/profile/update', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        // CSRF токен, если используется
+                        'X-CSRFToken': getCSRFToken() // Функция для получения CSRF токена
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Настройки успешно сохранены!');
+
+                            // Обновляем данные на странице, если нужно
+                            if (data.avatar_url) {
+                                currentAvatar.src = data.avatar_url;
+                            }
+
+                            closeModal();
+                        } else {
+                            alert('Ошибка при сохранении: ' + (data.error || 'Неизвестная ошибка'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Произошла ошибка при сохранении настроек');
+                    });
+            });
+
+            // Обработчик загрузки аватара
+            uploadAvatarBtn.addEventListener('click', function () {
+                avatarInput.click();
+            });
+
+            // Превью выбранного аватара
+            avatarInput.addEventListener('change', function (e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentAvatar.src = e.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            // Функция для получения CSRF токена (если используется)
+            function getCSRFToken() {
+                const csrfToken = document.querySelector('[name=csrf_token]');
+                return csrfToken ? csrfToken.value : '';
+            }
+        });
+    </script>
 </body>
 
 </html>

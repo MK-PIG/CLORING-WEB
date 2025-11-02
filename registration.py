@@ -51,23 +51,3 @@ class Registartor:
             return True
         except Exception:  # нужно постараться конкретизировать ошибки, чтобы их качественно обрабатывать
             return False
-
-    def check_correction_email(self, email: str) -> bool:  # type: ignore
-        """Проверяет корректнсоть эл почты
-            Возващает True если email корректен, False в ином случае
-        Args:
-            email (str): 
-
-        Returns:
-            bool: 
-        """
-        # Возможно стоит выкидывать исключение, чтобы далее его обабатывать и показывать комментарий исключения пользователю в форме?
-        if len(email) < 4 or len(email) > 254:
-            return False
-        if '@' not in email or '.' not in email or email.count('.') > 1 or ' ' in email or email.count('@') > 1:
-            return False
-        local_part, domain = email.split('@')
-        if len(local_part) > 64 or len(domain) > 254:
-            return False
-
-        return True

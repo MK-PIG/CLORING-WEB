@@ -2,7 +2,9 @@ from flask import Flask, jsonify, render_template, url_for, request, session, re
 from registration import Registartor
 from db import DateBase
 from autotentification import Autotentificator
+from validation import Validator
 
+valid = Validator()
 aut = Autotentificator()
 base = DateBase()
 rg = Registartor()
@@ -35,9 +37,8 @@ def sign_in():
 def registration():
     if request.method == 'POST':
         try:
-            if rg.check_correction_email(request.form['email']) and rg.find_user(request.form['email'], request.form['password']) == False:
+            if valid.check_correction_email(request.form['email']) and rg.find_user(request.form['email'], request.form['password']) == False:
                 if rg.reg(request.form['email'], request.form['password']):
-                    # username = request.form['email'].split('@')[0]
                     session['userLogged'] = request.form['email']
                     email = request.form['email']
                     return redirect(url_for(f'profile', email=email))
@@ -61,7 +62,9 @@ def profile(email):
     if 'phone_number' in session:
         phone_number = session['phone_number']
     else:
-        phone_number = ''
+        result_select = base.select(
+            'phone_number', 'users', f'email="{email}"')
+        phone_number = result_select[0][0] if result_select else ''
 
     username = email.split('@')[0]
     return render_template('user_account.html', email=email, username=username, phone_number=phone_number)
@@ -78,10 +81,17 @@ def update_profile():
         if not new_email or not phone_number:
             return jsonify({'success': False, 'error': 'Все поля обязательны'})
 
+        if not valid.check_correction_email(new_email):
+            return jsonify({'success': False, 'error': 'Некорректный адрес эл. почты'})
+
+        if not valid.check_phone_number_correction(phone_number):
+            return jsonify({'success': False, 'error': 'Некорректный номер телефона'})
+
         # Здесь сохраняем в базу данных
         result_of_operation = base.update_table('users', ['email', 'phone_number'], [
             f'"{new_email}"', f'"{phone_number}"'], f'email="{old_email}"')
 
+        # Здесь сохраняем данные о пользователе в сесиию
         if result_of_operation:
             session['userLogged'] = new_email
             session['phone_number'] = phone_number
@@ -101,6 +111,7 @@ def update_profile():
 def logout():
     print('logout')
     session.pop('userLogged', None)
+    session.pop('phone_number', None)
     return render_template('main.html')
 
 

@@ -109,10 +109,22 @@ def update_profile():
 
 @app.route('/logout')
 def logout():
-    print('logout')
     session.pop('userLogged', None)
     session.pop('phone_number', None)
     return render_template('main.html')
+
+
+@app.route('/upload_clothes_form/<email>')
+def upload_clothes_form(email):
+    return render_template('upload_form.html', email=email)
+
+
+@app.route('/form_handler', methods=['GET', 'POST'])
+def form_handler():
+    if request.method == "POST":
+        # обрабатываем запрос и заносим инфу в бд
+        pass
+    return redirect(url_for('profile', email=session['userLogged']))
 
 
 if __name__ == '__main__':

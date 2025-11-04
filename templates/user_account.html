@@ -668,7 +668,8 @@
                 <div class="content-section">
                     <div class="section-header">
                         <div class="section-title">Последние вещи</div>
-                        <a href="#" class="btn btn-primary">Добавить вещь</a>
+                        <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Добавить
+                            вещь</a>
                     </div>
 
                     <div class="items-grid">
@@ -738,12 +739,11 @@
 
             <div class="form-group">
                 <label class="form-label" for="user-email">Электронная почта</label>
-                <!--В value записывать значени почты юзера-->
-                <input type="email" class="form-input" id="user-email" value={{email}}> <!--{{email}}-->
+                <input type="email" class="form-input" id="user-email" value={{email}}>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="user-phone">Номер телефона</label> <!--{{phone_number}}-->
+                <label class="form-label" for="user-phone">Номер телефона</label>
                 <input type="tel" class="form-input" id="user-phone" value={{phone_number}}>
             </div>
 
@@ -873,12 +873,6 @@
                     reader.readAsDataURL(e.target.files[0]);
                 }
             });
-
-            // Функция для получения CSRF токена (если используется)
-            function getCSRFToken() {
-                const csrfToken = document.querySelector('[name=csrf_token]');
-                return csrfToken ? csrfToken.value : '';
-            }
         });
     </script>
 </body>

@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, render_template, url_for, request, session, redirect, abort
+from werkzeug.utils import secure_filename
 from registration import Registartor
 from db import DateBase
 from autotentification import Autotentificator
 from validation import Validator
+import os
 
 valid = Validator()
 aut = Autotentificator()
@@ -10,7 +12,11 @@ base = DateBase()
 rg = Registartor()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'MK-PIG'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 base.create_users_table()
+base.create_table_users_items()
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 
 @app.route('/sign_in', methods=['GET', 'POST'])
@@ -122,8 +128,25 @@ def upload_clothes_form(email):
 @app.route('/form_handler', methods=['GET', 'POST'])
 def form_handler():
     if request.method == "POST":
-        # обрабатываем запрос и заносим инфу в бд
-        pass
+        file = request.files['clothes_photo']
+        if file:
+            filename = secure_filename(file.filename)  # type: ignore
+            path_to_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        user_id = base.select('user_id', 'users',
+                              f'email="{session['userLogged']}"')[0][0]
+        keys = 'user_id, clothes_link_to_photo, '
+        values = f'"{user_id}", "{path_to_file}", '
+        for key, value in request.form.items():
+            keys += f'{key}, '
+            values += f'"{value}", '
+
+        # удаляем пробел и запятую в конце
+        keys = keys[:-2]
+        values = values[:-2]
+        if base.insert('users_items', keys, values):
+            file.save(path_to_file)
+
     return redirect(url_for('profile', email=session['userLogged']))
 
 

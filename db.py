@@ -47,7 +47,7 @@ class DateBase:
 
             return cursor.fetchall()
 
-    def insert(self, table_name: str, fields: str, values: str) -> None:
+    def insert(self, table_name: str, fields: str, values: str) -> bool:
         """Вставляет запись в таблицу
 
         Args:
@@ -59,6 +59,7 @@ class DateBase:
             cursor = con.cursor()
             request = f'INSERT INTO {table_name} ({fields}) VALUES({values})'
             cursor.execute(request)
+        return True
 
     def update_table(self, table_name: str, fields: list, new_values: list, condition: str = '') -> bool:
         try:
@@ -75,8 +76,25 @@ class DateBase:
         except Exception:
             return False
 
-    def create_table_catalog(self):
-        pass
+    def create_table_users_items(self):
+        """
+        Создает таблицу users_items с ниже указаннами полями, если она не сущ, иначе ничего не делает
+        """
+        with sq.connect(self.db_path) as con:
+            cursor = con.cursor()
+            cursor.execute("""CREATE TABLE IF NOT EXISTS users_items (
+                            item_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            user_id INTEGER,
+                            clothes_name TEXT NOT NULL,
+                            clothes_category TEXT NOT NUll,
+                            clothes_size TEXT NOT NULL,
+                            clothes_condition TEXT NOT NULL,
+                            clothes_brand TEXT,
+                            clothes_material TEXT,
+                            clothes_color TEXT,
+                            clothes_description TEXT,
+                            clothes_link_to_photo TEXT,
+                           FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE)""")
 
 
 if __name__ == '__main__':

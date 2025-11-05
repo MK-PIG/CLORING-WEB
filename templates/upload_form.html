@@ -663,7 +663,7 @@
                 const formData = new FormData(addItemForm);
 
                 // Отправляем данные на сервер
-                fetch('{{ url_for("form_handler") }}', {
+                fetch('{{ url_for("add_clothes") }}', {
                     method: 'POST',
                     body: formData
                 })

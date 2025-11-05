@@ -21,7 +21,11 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 @app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
-
+    """Позволяет пользователю войти в личный кабинет
+        Если операция успешна, то пользователь перенаправляется на страницу profile, в случае неудачи - остается на странице авторизации 
+    Returns:
+        _type_: либо шаблон страницы авторизации либо передаресация в лк
+    """
     if 'userLogged' in session:
         return redirect(url_for('profile', email=session['userLogged']))
 
@@ -41,13 +45,19 @@ def sign_in():
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
+    """позволяет зарегистрировать пользователя на сайте
+
+
+    Returns:
+        _type_: шаблон страницы регистрации в случае неудачи либо переадресация в личный кабинет пользователя
+    """
     if request.method == 'POST':
         try:
             if valid.check_correction_email(request.form['email']) and rg.find_user(request.form['email'], request.form['password']) == False:
                 if rg.reg(request.form['email'], request.form['password']):
                     session['userLogged'] = request.form['email']
                     email = request.form['email']
-                    return redirect(url_for(f'profile', email=email))
+                    return redirect(url_for('profile', email=email))
         except ValueError as erorr:
             return render_template('registration.html', erorr=erorr)
 
@@ -56,12 +66,24 @@ def registration():
 
 @app.route('/')
 def main():
-    print('main')
+    """отрисовывает главную страницу
+
+    Returns:
+        _type_: возвращает шаблон главной страницы
+    """
     return render_template('main.html')
 
 
 @app.route('/profile/<email>')
 def profile(email):
+    """отрисовывает личный кабинет пользователя
+
+    Args:
+        email (_type_): электроная почта (логин) пользователя
+        если пользователь через адресную строку пытается попать в чужой лк, то abort-им ошибку доступа 401
+    Returns:
+        _type_: _description_
+    """
     # если пользователь не в сессии - то не даем юзеру доступ к изменению url
     if 'userLogged' not in session or session['userLogged'] != email:
         abort(401)
@@ -78,6 +100,11 @@ def profile(email):
 
 @app.route('/profile/update', methods=['POST'])
 def update_profile():
+    """служит для обновления/ добаления данных пользователя в личном кабинете
+
+    Returns:
+        _type_: ничего
+    """
     try:
         old_email = session.get('userLogged')
         new_email = request.form.get('email')
@@ -115,6 +142,11 @@ def update_profile():
 
 @app.route('/logout')
 def logout():
+    """позволяет выйти из личного кабинета пользователю. Юзер удаляется из текущей сессии
+
+    Returns:
+        _type_: отрисовывает шаблон главной страницы
+    """
     session.pop('userLogged', None)
     session.pop('phone_number', None)
     return render_template('main.html')
@@ -122,11 +154,24 @@ def logout():
 
 @app.route('/upload_clothes_form/<email>')
 def upload_clothes_form(email):
+    """отрисовывает страницу для добавления вещей на обмен
+
+    Args:
+        email (_type_): эл почта пользователя
+
+    Returns:
+        _type_: шаблон формы для зааполнения
+    """
     return render_template('upload_form.html', email=email)
 
 
-@app.route('/form_handler', methods=['GET', 'POST'])
-def form_handler():
+@app.route('/add_clothes', methods=['GET', 'POST'])
+def add_clothes():
+    """обрабатывает данные из формы и записывает их в БД
+
+    Returns:
+        _type_: переадресовывает пользователя в лк
+    """
     if request.method == "POST":
         file = request.files['clothes_photo']
         if file:

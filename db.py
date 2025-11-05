@@ -25,7 +25,7 @@ class DateBase:
                             password TEXT NOT NULL,
                             phone_number TEXT NULL )""")
 
-    def select(self, fields: str, table_name: str, where: str = '') -> list:
+    def select(self, fields: str, table_name: str, where: str = '') -> list[tuple]:
         """Делает выборку полей fields из таблицы table_name с доп условием где where
 
         Args:

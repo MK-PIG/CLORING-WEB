@@ -26,7 +26,7 @@ class DateBase:
                             password TEXT NOT NULL,
                             phone_number TEXT NULL )""")
             info_logger.info(
-                "The table has been created. Columns: user_id, email? password, phone_number")
+                "The table has been created. Columns: user_id, email, password, phone_number")
 
     def select(self, fields: str, table_name: str, where: str = '') -> list[tuple]:
         """Делает выборку полей fields из таблицы table_name с доп условием где where

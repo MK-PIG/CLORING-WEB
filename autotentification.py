@@ -1,4 +1,5 @@
 from db import DateBase
+from logger import (info_logger, er_logger)
 
 base = DateBase()
 
@@ -29,8 +30,10 @@ class Autotentificator:
             return False
         for em, psw in rows:
             if em == email and psw == password:
+                info_logger.info(f"User is found. Email: {email}")
                 return True
             if em == email and psw != password:
+                info_logger.info(f"Incorrect input data. Input email: {email}")
                 raise ValueError("Неверно введены входные данные")
 
 

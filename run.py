@@ -11,8 +11,12 @@ aut = Autotentificator()
 base = DateBase()
 rg = Registartor()
 app = Flask(__name__)
+"""------------------------------"""
+# убрать в файл, который будет игнорироваться гитом
+# изменить secret_key
 app.config['SECRET_KEY'] = 'MK-PIG'
 app.config['UPLOAD_FOLDER'] = 'uploads'
+"""------------------------------"""
 base.create_users_table()
 base.create_table_users_items()
 if not os.path.exists(app.config['UPLOAD_FOLDER']):

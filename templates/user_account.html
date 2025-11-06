@@ -739,12 +739,12 @@
 
             <div class="form-group">
                 <label class="form-label" for="user-email">Электронная почта</label>
-                <input type="email" class="form-input" id="user-email" value={{email}}>
+                <input type="email" class="form-input" id="user-email" name="emai" value={{email}}>
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="user-phone">Номер телефона</label>
-                <input type="tel" class="form-input" id="user-phone" value={{phone_number}}>
+                <input type="tel" class="form-input" id="user-phone" name="phone" value={{phone_number}}>
             </div>
 
             <div class="modal-actions">
@@ -873,6 +873,11 @@
                     reader.readAsDataURL(e.target.files[0]);
                 }
             });
+            // Функция для получения CSRF токена (если используется)
+            function getCSRFToken() {
+                const csrfToken = document.querySelector('[name=csrf_token]');
+                return csrfToken ? csrfToken.value : '';
+            }
         });
     </script>
 </body>

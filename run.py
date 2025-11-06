@@ -51,6 +51,8 @@ def registration():
     Returns:
         _type_: шаблон страницы регистрации в случае неудачи либо переадресация в личный кабинет пользователя
     """
+    if 'userLogged' in session:
+        return redirect(url_for('profile', email=session['userLogged']))
     if request.method == 'POST':
         try:
             if valid.check_correction_email(request.form['email']) and rg.find_user(request.form['email'], request.form['password']) == False:

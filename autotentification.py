@@ -27,13 +27,13 @@ class Autotentificator:
         """
         rows = base.select('email, password', 'users', f'email == "{email}"')
         if not rows:
-            return False
+            return False  # Тут тоже должено быть логирование, но я не выкупаю, что происходит))
         for em, psw in rows:
             if em == email and psw == password:
                 info_logger.info(f"User is found. Email: {email}")
                 return True
             if em == email and psw != password:
-                info_logger.info(f"Incorrect input data. Input email: {email}")
+                er_logger.error(f"Incorrect input data. Input email: {email}")
                 raise ValueError("Неверно введены входные данные")
 
 

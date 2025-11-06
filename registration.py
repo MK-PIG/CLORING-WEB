@@ -1,5 +1,5 @@
 from db import DateBase
-
+from logger import (info_logger, er_logger)
 
 base = DateBase()
 
@@ -28,11 +28,13 @@ class Registartor:
         # если пользователь вводит верный пароль и email то его можно просто авторизовывать
         rows = base.select('email, password', 'users', f'email == "{email}"')
         if not rows:
-            return False
+            return False  # Тут тоже непон
         for em, psw in rows:
             if em == email and psw == password:
+                info_logger.info(f"User has been found. Email: {email}")
                 return True
             if em == email:
+                er_logger.error(f"User with email: {email} already exist")
                 raise ValueError("Пользователь с таким email уже существует")
 
     def reg(self, email: str, password: str) -> bool:  # type: ignore
@@ -48,6 +50,8 @@ class Registartor:
         try:
             base.insert('users', 'email, password',
                         f'"{email}", "{password}"')
+            info_logger.info(f"Successfully registration. Email: {email}")
             return True
         except Exception:  # нужно постараться конкретизировать ошибки, чтобы их качественно обрабатывать
+            er_logger.error(f"Some error with registration. Email: {email}")
             return False

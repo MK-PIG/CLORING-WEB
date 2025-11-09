@@ -5,6 +5,7 @@ from db import DateBase
 from autotentification import Autotentificator
 from validation import Validator
 import os
+from logger import (info_logger, er_logger)
 
 valid = Validator()
 aut = Autotentificator()
@@ -31,6 +32,7 @@ def sign_in():
         _type_: либо шаблон страницы авторизации либо передаресация в лк
     """
     if 'userLogged' in session:
+        info_logger.info("User is already logged. Redirected to profile page")
         return redirect(url_for('profile', email=session['userLogged']))
 
     if request.method == 'POST':
@@ -38,8 +40,12 @@ def sign_in():
             if aut.find_user(request.form['email'], request.form['password']):
                 session['userLogged'] = request.form['email']
                 email = request.form['email']
+                info_logger.info(
+                    f"User sign in and redirected to profile. Email: {email}")
                 return redirect(url_for('profile', email=email))
             else:
+                er_logger.error(
+                    f"Wrong email: {request.form['email']} or passwords")
                 return render_template('sign_in.html', e="Неверный email или пароль")
         except ValueError as e:
             return render_template('sign_in.html', e=e)
@@ -63,8 +69,12 @@ def registration():
                 if rg.reg(request.form['email'], request.form['password']):
                     session['userLogged'] = request.form['email']
                     email = request.form['email']
+                    info_logger.info(
+                        f"User has been registrated. user redirected to profile. Email: {email}")
                     return redirect(url_for('profile', email=email))
         except ValueError as erorr:
+            er_logger.error(
+                f"Wrong input data for registration. Email: {email}")
             return render_template('registration.html', erorr=erorr)
 
     return render_template('registration.html')
@@ -77,6 +87,7 @@ def main():
     Returns:
         _type_: возвращает шаблон главной страницы
     """
+    info_logger.info("Render main page")
     return render_template('main.html')
 
 
@@ -92,6 +103,7 @@ def profile(email):
     """
     # если пользователь не в сессии - то не даем юзеру доступ к изменению url
     if 'userLogged' not in session or session['userLogged'] != email:
+        er_logger.error(f"Error 401. Email: {email}")
         abort(401)
     if 'phone_number' in session:
         phone_number = session['phone_number']
@@ -101,6 +113,8 @@ def profile(email):
         phone_number = result_select[0][0] if result_select else ''
 
     username = email.split('@')[0]
+    info_logger.info(
+        f"User has been redirected to personal account. Email: {email}, username: {username}, phone number: {phone_number}")
     return render_template('user_account.html', email=email, username=username, phone_number=phone_number)
 
 
@@ -118,12 +132,16 @@ def update_profile():
 
         # Валидация данных
         if not new_email or not phone_number:
+            er_logger.error(f"All fields are required to update profile")
             return jsonify({'success': False, 'error': 'Все поля обязательны'})
 
         if not valid.check_correction_email(new_email):
+            er_logger.error(f"Incorrect email for update profile: {new_email}")
             return jsonify({'success': False, 'error': 'Некорректный адрес эл. почты'})
 
         if not valid.check_phone_number_correction(phone_number):
+            er_logger.error(
+                f"Incorrect phone number for update profile: {phone_number}")
             return jsonify({'success': False, 'error': 'Некорректный номер телефона'})
 
         # Здесь сохраняем в базу данных
@@ -135,6 +153,7 @@ def update_profile():
             session['userLogged'] = new_email
             session['phone_number'] = phone_number
 
+        info_logger.info(f"Profile has been updated. Email: {new_email}")
         return jsonify({
             'success': True,
             'message': 'Профиль обновлен',
@@ -143,6 +162,7 @@ def update_profile():
         })
 
     except Exception as e:
+        er_logger.error("Some error with profile update")
         return jsonify({'success': False, 'error': str(e)})
 
 
@@ -155,6 +175,8 @@ def logout():
     """
     session.pop('userLogged', None)
     session.pop('phone_number', None)
+    info_logger.info(
+        "User has been log out. Deleted from active session. Redirected to main page")
     return render_template('main.html')
 
 
@@ -168,6 +190,7 @@ def upload_clothes_form(email):
     Returns:
         _type_: шаблон формы для зааполнения
     """
+    info_logger.info(f"Clothing page has been rendered. Email: {email}")
     return render_template('upload_form.html', email=email)
 
 
@@ -197,7 +220,8 @@ def add_clothes():
         values = values[:-2]
         if base.insert('users_items', keys, values):
             file.save(path_to_file)
-
+    info_logger.info(
+        "Clothing data has been added to DB. User redirected to profile.")
     return redirect(url_for('profile', email=session['userLogged']))
 
 

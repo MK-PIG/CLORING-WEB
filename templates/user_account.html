@@ -660,7 +660,7 @@
                             <div class="stat-label">Всего вещей</div>
                         </div>
                     </div>
-                    <div class="stat-value">11</div>
+                    <div class="stat-value">{{len_list_of_items}}</div>
                 </div>
 
 
@@ -671,52 +671,26 @@
                         <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Добавить
                             вещь</a>
                     </div>
-
+                    <!-- ОДИН контейнер для всей сетки -->
                     <div class="items-grid">
+                        {% for item_dict in list_of_items %}
+                        <!-- МНОГО карточек внутри одной сетки -->
                         <div class="item-card">
                             <div class="item-image">
-                                <img src="https://avatars.mds.yandex.net/i?id=4f37e93176fc236a5c6a5d852046ce01_l-5235948-images-thumbs&n=13"
-                                    alt="Синее платье">
+                                <img src="{{ url_for('static', filename='uploads/' + item_dict['clothes_link_to_photo']) }}"
+                                    alt="{{ item_dict['clothes_name'] }}">
                             </div>
                             <div class="item-info">
-                                <div class="item-name">Синее платье</div>
+                                <div class="item-name">{{item_dict['clothes_name']}}</div>
                                 <span class="item-status status-approved">Одобрено</span>
                             </div>
                         </div>
-
-                        <div class="item-card">
-                            <div class="item-image">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">Кожаная куртка</div>
-                                <span class="item-status status-pending">На модерации</span>
-                            </div>
-                        </div>
-
-                        <div class="item-card">
-                            <div class="item-image">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">Джинсы</div>
-                                <span class="item-status status-approved">Одобрено</span>
-                            </div>
-                        </div>
-
-                        <div class="item-card">
-                            <div class="item-image">
-                                <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg"
-                                    alt="Красная блузка">
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">Красная блузка</div>
-                                <span class="item-status status-rejected">Отклонено</span>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
+
                 </div>
             </div>
+        </div>
         </div>
     </section>
 

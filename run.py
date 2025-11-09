@@ -16,7 +16,7 @@ app = Flask(__name__)
 # убрать в файл, который будет игнорироваться гитом
 # изменить secret_key
 app.config['SECRET_KEY'] = 'MK-PIG'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = 'static\\uploads'
 """------------------------------"""
 base.create_users_table()
 base.create_table_users_items()
@@ -27,7 +27,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 @app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     """Позволяет пользователю войти в личный кабинет
-        Если операция успешна, то пользователь перенаправляется на страницу profile, в случае неудачи - остается на странице авторизации 
+        Если операция успешна, то пользователь перенаправляется на страницу profile, в случае неудачи - остается на странице авторизации
     Returns:
         _type_: либо шаблон страницы авторизации либо передаресация в лк
     """
@@ -108,14 +108,26 @@ def profile(email):
     if 'phone_number' in session:
         phone_number = session['phone_number']
     else:
-        result_select = base.select(
+        result_select_phone_number = base.select(
             'phone_number', 'users', f'email="{email}"')
-        phone_number = result_select[0][0] if result_select else ''
+        phone_number = result_select_phone_number[0][0] if result_select_phone_number else ''
+
+    result_select_user_id = base.select(
+        'user_id', 'users', f'email="{email}"')
+    user_id = result_select_user_id[0][0] if result_select_user_id else ''
+    LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
+                       'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
+    result_select_items = base.select(
+        ', '.join(LIST_ITEMS_KEYS), 'users_items', f'user_id="{user_id}"')
+
+    list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
+                     for clothes_values_tuple in result_select_items]
+    print(list_of_items)
 
     username = email.split('@')[0]
     info_logger.info(
         f"User has been redirected to personal account. Email: {email}, username: {username}, phone number: {phone_number}")
-    return render_template('user_account.html', email=email, username=username, phone_number=phone_number)
+    return render_template('user_account.html', email=email, username=username, phone_number=phone_number, list_of_items=list_of_items, len_list_of_items=len(list_of_items))
 
 
 @app.route('/profile/update', methods=['POST'])
@@ -210,7 +222,7 @@ def add_clothes():
         user_id = base.select('user_id', 'users',
                               f'email="{session['userLogged']}"')[0][0]
         keys = 'user_id, clothes_link_to_photo, '
-        values = f'"{user_id}", "{path_to_file}", '
+        values = f'"{user_id}", "{filename}", '
         for key, value in request.form.items():
             keys += f'{key}, '
             values += f'"{value}", '

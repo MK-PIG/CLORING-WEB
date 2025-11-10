@@ -408,14 +408,15 @@
             <nav>
                 <ul>
                     <li><a href="#">О нас</a></li>
-                    <li><a href="#">Каталог</a></li>
+                    <li><a href="{{url_for('catalog')}}">Каталог</a></li>
                 </ul>
             </nav>
 
             <div class="logo">CLORING</div>
 
             <div class="auth-buttons">
-                <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'" class="btn btn-support">Поддержать проект</button>
+                <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
+                    class="btn btn-support">Поддержать проект</button>
                 <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
                 <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
             </div>

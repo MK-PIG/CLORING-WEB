@@ -237,5 +237,11 @@ def add_clothes():
     return redirect(url_for('profile', email=session['userLogged']))
 
 
+@app.route('/catalog', methods=['GET', 'POST'])
+def catalog():
+
+    return render_template('catalog.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -239,8 +239,9 @@ def add_clothes():
 
 @app.route('/catalog', methods=['GET', 'POST'])
 def catalog():
-
-    return render_template('catalog.html')
+    if not session.get('userLogged', False):
+        return redirect(url_for('sign_in'))
+    return render_template('catalog.html', email=session['userLogged'])
 
 
 if __name__ == '__main__':

@@ -126,8 +126,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-
-
         .dashboard {
             margin-top: 80px;
             padding: 40px 0;
@@ -159,16 +157,12 @@
             padding: 0 20px;
         }
 
-
-
-
         .sidebar {
             background: white;
             border-radius: 10px;
             padding: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
-
 
         .sidebar-menu {
             list-style: none;
@@ -271,7 +265,6 @@
             gap: 20px;
         }
 
-
         .size-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -289,9 +282,7 @@
             font-weight: 600;
             color: #88a998;
             padding: 1, 5%;
-
         }
-
 
         .item-card {
             background: #ffffff;
@@ -305,13 +296,11 @@
             border-radius: 8px;
             margin-bottom: 18px;
             padding: 5%;
-
             overflow: hidden;
             transition: transform 0.3s;
         }
 
         .attr-card:hover {
-
             transform: translateY(-3px);
         }
 
@@ -342,29 +331,24 @@
 
         .item-name {
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .item-status {
             font-size: 12px;
-            padding: 3px 8px;
+            padding: 8px 12px;
             border-radius: 4px;
             display: inline-block;
+            text-decoration: none;
+            color: white;
+            background-color: #88a998;
+            transition: all 0.3s;
         }
 
-        .status-approved {
-            background: #e8f5e9;
-            color: #2e8b57;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-rejected {
-            background: #f8d7da;
-            color: #721c24;
+        .item-status:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* подвальчик */
@@ -381,7 +365,6 @@
             margin: 0 auto;
             text-align: center;
         }
-
 
         /* адаптивность для других устройств */
         @media (max-width: 968px) {
@@ -451,7 +434,7 @@
         <div class="container">
             <nav>
                 <ul>
-                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="{{url_for('main')}}">Главная</a></li>
                     <li><a href="about.html">О нас</a></li>
                 </ul>
             </nav>
@@ -459,9 +442,10 @@
             <div class="logo">CLORING</div>
 
             <div class="auth-buttons">
-                <a href="#" class="btn btn-support">Поддержать проект</a>
-                <a href="#" class="btn btn-login">Войти</a>
-                <a href="#" class="btn btn-register">Регистрация</a>
+                <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
+                    class="btn btn-support">Поддержать проект</button>
+                <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
+                <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
             </div>
         </div>
     </header>
@@ -522,8 +506,6 @@
                 </ul>
             </div>
 
-
-
             <div class="main-content">
                 <div class="items-grid">
                     <div class="item-card">
@@ -533,7 +515,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Синее платье</div>
-                            <span class="item-status status-approved">Одобрено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -543,7 +525,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Кожаная куртка</div>
-                            <span class="item-status status-pending">На модерации</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -553,7 +535,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Джинсы</div>
-                            <span class="item-status status-approved">Одобрено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -564,7 +546,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Красная блузка</div>
-                            <span class="item-status status-rejected">Отклонено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -574,7 +556,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Боди детское</div>
-                            <span class="item-status status-approved">Одобрено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -585,7 +567,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Рубашка синяя</div>
-                            <span class="item-status status-rejected">Отклонено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -596,7 +578,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Платье для девочки</div>
-                            <span class="item-status status-approved">Одобрено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -606,7 +588,7 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Свитер тёплый</div>
-                            <span class="item-status status-pending">На модерации</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
 
@@ -616,19 +598,13 @@
                         </div>
                         <div class="item-info">
                             <div class="item-name">Костюм Деда Мороза</div>
-                            <span class="item-status status-rejected">Отклонено</span>
+                            <a href="#" class="item-status">Перейти к обмену</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-        </div>
-        </div>
-        </div>
     </section>
-
-
 
     <!-- подвал сайта -->
     <footer>

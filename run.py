@@ -254,13 +254,6 @@ def catalog():
 
     list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
                      for clothes_values_tuple in result_select_items]
-    for items_dict in list_of_items:
-
-        # ищем номер телефона пользователя и добавляем его в словарь
-        result_select_phone_number = base.select(
-            'phone_number', 'users', f'user_id="{items_dict['user_id']}"')
-        phone_number = result_select_phone_number[0][0] if result_select_phone_number else ""
-        items_dict['phone_number'] = phone_number
 
     return render_template('catalog.html', email=session['userLogged'], list_of_items=list_of_items)
 

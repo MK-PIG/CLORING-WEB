@@ -74,7 +74,7 @@ def registration():
                     return redirect(url_for('profile', email=email))
         except ValueError as erorr:
             er_logger.error(
-                f"Wrong input data for registration. Email: {email}")
+                f"Wrong input data for registration. Email: {request.form['email']}")
             return render_template('registration.html', erorr=erorr)
 
     return render_template('registration.html')
@@ -122,7 +122,6 @@ def profile(email):
 
     list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
                      for clothes_values_tuple in result_select_items]
-    print(list_of_items)
 
     username = email.split('@')[0]
     info_logger.info(
@@ -241,7 +240,49 @@ def add_clothes():
 def catalog():
     if not session.get('userLogged', False):
         return redirect(url_for('sign_in'))
-    return render_template('catalog.html', email=session['userLogged'])
+    email = session['userLogged']
+
+    result_select_user_id = base.select(
+        'user_id', 'users', f'email="{email}"')
+    user_id = result_select_user_id[0][0] if result_select_user_id else ''
+
+    LIST_ITEMS_KEYS = ['clothes_name',
+                       'clothes_link_to_photo', 'user_id', 'item_id']
+
+    result_select_items = base.select(
+        ', '.join(LIST_ITEMS_KEYS), 'users_items', f'user_id!="{user_id}"')
+
+    list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
+                     for clothes_values_tuple in result_select_items]
+    for items_dict in list_of_items:
+
+        # ищем номер телефона пользователя и добавляем его в словарь
+        result_select_phone_number = base.select(
+            'phone_number', 'users', f'user_id="{items_dict['user_id']}"')
+        phone_number = result_select_phone_number[0][0] if result_select_phone_number else ""
+        items_dict['phone_number'] = phone_number
+
+    return render_template('catalog.html', email=session['userLogged'], list_of_items=list_of_items)
+
+
+@app.route('/card/<user_id>/<item_id>')
+def card(user_id: str, item_id: str):
+
+    LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
+                       'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
+
+    result_select_item = base.select(
+        ', '.join(LIST_ITEMS_KEYS), 'users_items', f'item_id="{item_id}"')[0]
+    item_dict = dict(zip(LIST_ITEMS_KEYS, result_select_item))
+    result_select_email = base.select(
+        'email', 'users', f'user_id="{user_id}"')[0][0]
+    email = result_select_email
+
+    result_select_phone_number = base.select(
+        'phone_number', 'users', f'user_id="{user_id}"')
+    phone_number = result_select_phone_number[0][0] if result_select_phone_number else "Нет"
+
+    return render_template("card.html", item_dict=item_dict, email=email, phone_number=phone_number)
 
 
 if __name__ == '__main__':

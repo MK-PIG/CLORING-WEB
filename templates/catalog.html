@@ -507,100 +507,21 @@
             </div>
 
             <div class="main-content">
+                {% for item_dict in list_of_items %}
                 <div class="items-grid">
                     <div class="item-card">
                         <div class="item-image">
-                            <img src="https://omsk.kokette.ru/imagelink/files/products/67148b93-133e-4b47-8449-c1ede1a42a85.jpg"
-                                alt="Синее платье">
+                            <img src="{{ url_for('static', filename='uploads/' + item_dict['clothes_link_to_photo']) }}"
+                                alt="{{ item_dict['clothes_name'] }}">
                         </div>
                         <div class="item-info">
-                            <div class="item-name">Синее платье</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
+                            <div class="item-name">{{item_dict['clothes_name']}}</div>
+                            <a href="{{url_for('card',user_id=item_dict['user_id'],item_id=item_dict['item_id'])}}"
+                                class="item-status">Перейти в карточку товару</a>
                         </div>
                     </div>
+                    {%endfor%}
 
-                    <div class="item-card">
-                        <div class="item-image">
-                            <i class="fas fa-tshirt"></i>
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Кожаная куртка</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <i class="fas fa-tshirt"></i>
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Джинсы</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg"
-                                alt="Красная блузка">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Красная блузка</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <img src="https://www.tekstil-vsem.ru/images/product/l/105325c42eb.jpg" alt="Боди детское">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Боди детское</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <img src="https://alfa-collection.ru/image/cache/catalog/30.10/muzhskaya-rubashka-davide-1707x2276.jpg"
-                                alt="Рубашка синяя">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Рубашка синяя</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <img src="https://crazylime.ru/upload/resize_cache/iblock/bca/800_800_1/bcace026f09a32fba57e64831f436503.jpg"
-                                alt="Платье для девочки">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Платье для девочки</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <img src="https://ir.ozone.ru/s3/multimedia-4/c400/6123047500.jpg" alt="Свитер тёплый">
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Свитер тёплый</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
-
-                    <div class="item-card">
-                        <div class="item-image">
-                            <i class="fas fa-tshirt"></i>
-                        </div>
-                        <div class="item-info">
-                            <div class="item-name">Костюм Деда Мороза</div>
-                            <a href="#" class="item-status">Перейти к обмену</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

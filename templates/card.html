@@ -367,52 +367,52 @@
     <section class="product-page">
         <div class="product-container">
             <div class="product-image">
-                <img src="https://i.pinimg.com/736x/36/7a/a5/367aa5285f095552e2bdd457777311bc.jpg" alt="Синее платье">
+                <img src="{{ url_for('static', filename='uploads/' + item_dict['clothes_link_to_photo']) }}"
+                    alt="{{item_dict.get('clothes_name')}}">
             </div>
 
             <div class="product-info">
                 <div class="product-header">
-                    <div class="product-category">Платья</div>
-                    <h2 class="product-title">Синее платье</h2>
+                    <div class="product-category">{{item_dict.get('clothes_category')}}</div>
+                    <h2 class="product-title">{{item_dict.get('clothes_name')}}</h2>
                     <div class="product-price">Обмен</div>
                 </div>
 
                 <p class="product-description">
-                    Описание апыфшвдауолрывитыофлдшщвагдывнрпофлв
-                    ыгоанрпыролвгшанрпыфошгванрвыолвгонр
+                    Описание: {{item_dict.get('clothes_description')}}
                 </p>
 
                 <div class="product-details">
                     <div class="detail-item">
                         <span class="detail-label">Размер</span>
-                        <span class="detail-value">M</span>
+                        <span class="detail-value">{{item_dict.get('clothes_size')}}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Цвет</span>
-                        <span class="detail-value">Темно-синий</span>
+                        <span class="detail-value">{{item_dict.get('clothes_color')}}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Материал</span>
-                        <span class="detail-value">Хлопок 95%, Эластан 5%</span>
+                        <span class="detail-value">{{item_dict.get('clothes_material')}}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Бренд</span>
-                        <span class="detail-value">Zara</span>
+                        <span class="detail-value">{{item_dict.get('clothes_brand')}}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Состояние</span>
-                        <span class="detail-value">Отличное</span>
+                        <span class="detail-value">{{item_dict.get('clothes_condition')}}</span>
                     </div>
                 </div>
 
                 <div class="product-owner">
                     <div class="owner-avatar">
                         <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613"
-                            alt="MK PIG">
+                            alt="{{email}}">
                     </div>
                     <div class="owner-info">
-                        <div class="owner-name">MK PIG</div>
-                        <div class="owner-stats">Для обмена: 4 вещи</div>
+                        <div class="owner-name">{{email}}</div>
+                        <div class="owner-stats">Для обмена: 4 вещи</div> <!-- ненужная инфомрация?-->
                     </div>
                 </div>
 
@@ -436,7 +436,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const exchangeBtn = document.querySelector('.btn-primary');
             exchangeBtn.addEventListener('click', function () {
-                alert('Вам доступен обмен. Номер владельца вещи: +79000000000');
+                alert('Вам доступен обмен. Номер владельца вещи: {{phone_number}}');
             });
         });
     </script>

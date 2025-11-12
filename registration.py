@@ -28,7 +28,7 @@ class Registartor:
         # если пользователь вводит верный пароль и email то его можно просто авторизовывать
         rows = base.select('email, password', 'users', f'email == "{email}"')
         if not rows:
-            return False  # Тут тоже непон
+            return False
         for em, psw in rows:
             if em == email and psw == password:
                 info_logger.info(f"User has been found. Email: {email}")

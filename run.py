@@ -5,6 +5,7 @@ from db import DateBase
 from autotentification import Autotentificator
 from validation import Validator
 import os
+import secrets
 from logger import (info_logger, er_logger)
 
 valid = Validator()
@@ -12,11 +13,15 @@ aut = Autotentificator()
 base = DateBase()
 rg = Registartor()
 app = Flask(__name__)
+DATABASE_PATH = os.environ.get('DATABASE_PATH', 'database.db')
+UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
 """------------------------------"""
 # убрать в файл, который будет игнорироваться гитом
 # изменить secret_key
-app.config['SECRET_KEY'] = 'MK-PIG'
-app.config['UPLOAD_FOLDER'] = 'static\\uploads'
+app.config['SECRET_KEY'] = os.environ.get(
+    'SECRET_KEY', secrets.token_hex(16))
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['DATABASE_PATH'] = DATABASE_PATH
 """------------------------------"""
 base.create_users_table()
 base.create_table_users_items()
@@ -279,4 +284,4 @@ def card(user_id: str, item_id: str):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

@@ -1,5 +1,5 @@
 from db import DateBase
-from logger import (info_logger, er_logger)
+from logger import info_logger, er_logger
 
 base = DateBase()
 

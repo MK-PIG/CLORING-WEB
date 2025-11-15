@@ -231,6 +231,13 @@
             font-size: 18px;
             font-weight: 600;
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .address-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
         .address-box i {
@@ -404,10 +411,12 @@
                     </div>
                     <div class="info-card-content">
                         <p>Пожалуйста, доставьте вашу одежду по следующему адресу:</p>
-                        <div class="address-box">
-                            <i class="fas fa-building"></i>
-                            г. Москва, Волоколамское шоссе, дом 4, корпус 6
-                        </div>
+                        <a href="https://yandex.ru/maps/-/CLGfMLln" target="_blank" style="text-decoration: none;">
+                            <div class="address-box">
+                                <i class="fas fa-building"></i>
+                                г. Москва, Волоколамское шоссе, дом 4, корпус 6
+                            </div>
+                        </a>
                     </div>
                 </div>
 

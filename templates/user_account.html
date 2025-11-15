@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- фавиконки для разных устройств -->
-    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
-    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
     <link rel="manifest" href="data:application/json,{}">
     <meta name="theme-color" content="#2e8b57">
 
 
-<!-- тут css начинается -->
+    <!-- тут css начинается -->
     <style>
         * {
             margin: 0;
@@ -34,7 +39,7 @@
         /* шапка */
         header {
             background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 15px 0;
             position: fixed;
             width: 100%;
@@ -101,7 +106,8 @@
             color: white;
             border: 1px solid #f78659;
         }
-    .btn-login {
+
+        .btn-login {
             background-color: transparent;
             color: #2e8b57;
             border: 1px solid #2e8b57;
@@ -120,7 +126,7 @@
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* основной баннер */
@@ -160,7 +166,7 @@
             background: white;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .user-info {
@@ -219,7 +225,8 @@
             transition: all 0.3s;
         }
 
-        .sidebar-menu a:hover, .sidebar-menu a.active {
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
             background: #88a998;
             color: #fff;
         }
@@ -241,7 +248,7 @@
             background: white;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s;
             width: 100%;
             display: flex;
@@ -289,7 +296,7 @@
             background: white;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .section-header {
@@ -583,7 +590,6 @@
             border-radius: 6px;
             cursor: pointer;
         }
-
     </style>
 </head>
 
@@ -608,7 +614,8 @@
             <div class="logo">CLORING</div>
 
             <div class="auth-buttons">
-                <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'" class="btn btn-support">Поддержать проект</button>
+                <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
+                    class="btn btn-support">Поддержать проект</button>
                 <a href="#" class="btn btn-login">Выйти</a>
             </div>
         </div>
@@ -627,7 +634,8 @@
             <div class="sidebar">
                 <div class="user-info">
                     <div class="user-avatar">
-                        <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613" alt="MK PIG">
+                        <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613"
+                            alt="MK PIG">
                     </div>
                     <div class="user-name">MK PIG</div>
                     <div class="user-email">mkpig@mail.ru</div>
@@ -662,10 +670,14 @@
                         <div class="stat-info">
                             <div class="stat-label">Ваши баллы</div>
                             <p style="font-size: 12px; color: #999; margin-top: 5px;">Осталось до получения купона:</p>
-                            <div style="width: 100%; max-width: 700px; height: 25px; background-color: #e0e0e0; border-radius: 12px; margin-top: 10px; overflow: hidden;">
-                                <div style="width: 0%; height: 100%; background-color: #88a998; border-radius: 12px; transition: width 0.5s ease;"></div>
+                            <div
+                                style="width: 100%; max-width: 700px; height: 25px; background-color: #e0e0e0; border-radius: 12px; margin-top: 10px; overflow: hidden;">
+                                <div
+                                    style="width: 0%; height: 100%; background-color: #88a998; border-radius: 12px; transition: width 0.5s ease;">
+                                </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #999; margin-top: 5px; width: 100%; max-width: 700px;">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 11px; color: #999; margin-top: 5px; width: 100%; max-width: 700px;">
                                 <span>0 баллов</span>
                                 <span>100 баллов</span>
                             </div>
@@ -683,7 +695,8 @@
                     <div class="items-grid">
                         <div class="item-card">
                             <div class="item-image">
-                                <img src="https://avatars.mds.yandex.net/i?id=4f37e93176fc236a5c6a5d852046ce01_l-5235948-images-thumbs&n=13" alt="Синее платье">
+                                <img src="https://avatars.mds.yandex.net/i?id=4f37e93176fc236a5c6a5d852046ce01_l-5235948-images-thumbs&n=13"
+                                    alt="Синее платье">
                             </div>
                             <div class="item-info">
                                 <div class="item-name">Синее платье</div>
@@ -713,7 +726,8 @@
 
                         <div class="item-card">
                             <div class="item-image">
-                                <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg" alt="Красная блузка">
+                                <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg"
+                                    alt="Красная блузка">
                             </div>
                             <div class="item-info">
                                 <div class="item-name">Красная блузка</div>
@@ -737,7 +751,8 @@
 
             <div class="avatar-upload">
                 <div class="avatar-preview">
-                    <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613" alt="Текущий аватар" id="current-avatar">
+                    <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613"
+                        alt="Текущий аватар" id="current-avatar">
                 </div>
                 <button class="avatar-upload-btn" id="upload-avatar">Изменить аватар</button>
             </div>
@@ -778,7 +793,7 @@
 
     <script>
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const settingsBtn = document.getElementById('settings-btn');
             const settingsModal = document.getElementById('settings-modal');
             const modalClose = document.getElementById('modal-close');
@@ -788,7 +803,7 @@
             const currentAvatar = document.getElementById('current-avatar');
 
 
-            settingsBtn.addEventListener('click', function(e) {
+            settingsBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 settingsModal.style.display = 'flex';
             });
@@ -802,14 +817,14 @@
             cancelBtn.addEventListener('click', closeModal);
 
 
-            settingsModal.addEventListener('click', function(e) {
+            settingsModal.addEventListener('click', function (e) {
                 if (e.target === settingsModal) {
                     closeModal();
                 }
             });
 
 
-            saveBtn.addEventListener('click', function() {
+            saveBtn.addEventListener('click', function () {
                 const email = document.getElementById('user-email').value;
                 const phone = document.getElementById('user-phone').value;
 
@@ -819,7 +834,7 @@
             });
 
 
-            uploadAvatarBtn.addEventListener('click', function() {
+            uploadAvatarBtn.addEventListener('click', function () {
                 const newAvatarUrl = 'https://avatars.mds.yandex.net/i?id=d7454a2093cc96c971aec205a6ecdebf_l-4904517-images-thumbs&n=13';
                 currentAvatar.src = newAvatarUrl;
                 alert('Аватар успешно изменен!');
@@ -827,4 +842,5 @@
         });
     </script>
 </body>
+
 </html>

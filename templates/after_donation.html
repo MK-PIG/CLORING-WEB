@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спасибо за пожертвование!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Фавиконки для разных устройств -->
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232e8b57'/%3E%3Cpath d='M30,30 L70,30 L75,40 L80,50 L80,75 L75,85 L60,90 L40,90 L25,85 L20,75 L20,50 L25,40 Z' fill='white' stroke='%232e8b57' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='38' r='6' fill='%232e8b57'/%3E%3Crect x='45' y='38' width='10' height='25' fill='%232e8b57'/%3E%3Cpath d='M20,50 Q30,45 50,45 Q70,45 80,50' fill='none' stroke='%232e8b57' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="manifest" href="data:application/json,{}">
+    <meta name="theme-color" content="#2e8b57">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* шапка */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3e56;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #88a998;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-left: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-support {
+            background-color: #f78659;
+            color: white;
+            border: 1px solid #f78659;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            color: #88a998;
+            border: 1px solid #88a998;
+        }
+
+        .btn-primary {
+            background-color: #88a998;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* основная часть */
+        .success-section {
+            margin-top: 80px;
+            padding: 60px 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .success-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #88a998;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .success-header h1 {
+            font-family: 'Free Mono';
+            font-size: 42px;
+            color: #2d3e56;
+            margin-bottom: 15px;
+        }
+
+        .success-header p {
+            font-size: 20px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .success-header .highlight {
+            color: #f78659;
+            font-weight: 600;
+        }
+
+        /* карточки информации */
+        .info-cards {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card-icon {
+            font-size: 32px;
+            color: #88a998;
+        }
+
+        .info-card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3e56;
+        }
+
+        .info-card-content {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .address-box {
+            background: linear-gradient(135deg, #88a998 0%, #669e85 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .address-box i {
+            margin-right: 10px;
+        }
+
+        .important-note {
+            background: #fff3cd;
+            border-left: 4px solid #f78659;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .important-note strong {
+            color: #f78659;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .rewards-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .reward-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .reward-item i {
+            font-size: 40px;
+            color: #f78659;
+            margin-bottom: 15px;
+        }
+
+        .reward-item h4 {
+            font-size: 18px;
+            color: #2d3e56;
+            margin-bottom: 10px;
+        }
+
+        .reward-item p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 50px;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .cta-section h3 {
+            font-size: 24px;
+            color: #2d3e56;
+            margin-bottom: 20px;
+        }
+
+        /* подвал */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo {
+                position: static;
+                transform: none;
+                margin-bottom: 10px;
+            }
+
+            nav ul {
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+
+            .auth-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .btn {
+                margin: 5px;
+            }
+
+            .success-header h1 {
+                font-size: 32px;
+            }
+
+            .success-icon {
+                font-size: 60px;
+            }
+
+            .rewards-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- шапка -->
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="{{url_for('main')}}">Главная</a></li>
+                    <li><a href="{{url_for('catalog')}}">Каталог</a></li>
+                </ul>
+            </nav>
+
+            <div class="logo">CLORING</div>
+
+            <div class="auth-buttons">
+                <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
+                    class="btn btn-support">Поддержать проект</button>
+                <a href="{{url_for('logout')}}" class="btn btn-login">Выйти</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <section class="success-section">
+        <div class="success-container">
+            <!-- Заголовок -->
+            <div class="success-header">
+                <div class="success-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h1>Спасибо за ваше пожертвование!</h1>
+                <p>
+                    Ваш вклад невероятно <span class="highlight">важен и значим</span>. Благодаря таким людям, как вы,
+                    мы можем помогать тем, кто в этом нуждается, и делать мир лучше!
+                </p>
+            </div>
+
+            <!-- Карточки с информацией -->
+            <div class="info-cards">
+                <!-- Адрес пункта приема -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h2 class="info-card-title">Адрес пункта приема</h2>
+                    </div>
+                    <div class="info-card-content">
+                        <p>Пожалуйста, доставьте вашу одежду по следующему адресу:</p>
+                        <div class="address-box">
+                            <i class="fas fa-building"></i>
+                            г. Москва, Волоколамское шоссе, дом 4, корпус 6
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Важная информация о подписи -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h2 class="info-card-title">Важная информация</h2>
+                    </div>
+                    <div class="info-card-content">
+                        <div class="important-note">
+                            <strong><i class="fas fa-tag"></i> Не забудьте подписать пакет!</strong>
+                            <p>
+                                Пожалуйста, подпишите пакет с одеждой своим <strong>ником на нашем сайте</strong>.
+                                Это необходимо для того, чтобы мы могли правильно идентифицировать вашу одежду
+                                и начислить баллы на ваш аккаунт. Без подписи будет затруднительно понять,
+                                чьи вещи были сданы.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Информация о баллах и наградах -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h2 class="info-card-title">Ваши награды</h2>
+                    </div>
+                    <div class="info-card-content">
+                        <p>
+                            После того, как мы получим вашу одежду, на ваш аккаунт будут начислены баллы!
+                            Накопив достаточное количество баллов, вы сможете обменять их на купоны от наших спонсоров.
+                        </p>
+                        <div class="rewards-list">
+                            <div class="reward-item">
+                                <i class="fas fa-star"></i>
+                                <h4>Баллы</h4>
+                                <p>За каждую принятую вещь вы получите баллы</p>
+                            </div>
+                            <div class="reward-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                <h4>Купоны</h4>
+                                <p>Обменивайте баллы на купоны от спонсоров</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Призыв к действию -->
+            <div class="cta-section">
+                <h3>Готовы сделать еще больше добрых дел?</h3>
+                <button onclick="window.location.href='user_account.html'" class="btn btn-primary">
+                    <i class="fas fa-user"></i> Вернуться в личный кабинет
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- подвал -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 CLORING. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

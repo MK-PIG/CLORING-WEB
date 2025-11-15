@@ -241,6 +241,11 @@ def add_clothes():
 
 @app.route('/catalog', methods=['GET', 'POST'])
 def catalog():
+    """отрисовывает страницу каталога с отображением всех вещей других пользователя, кроме вещей текущего
+
+    Returns:
+        _type_: страницу каталога
+    """
     if not session.get('userLogged', False):
         return redirect(url_for('sign_in'))
     email = session['userLogged']
@@ -263,6 +268,15 @@ def catalog():
 
 @app.route('/card/<user_id>/<item_id>')
 def card(user_id: str, item_id: str):
+    """отрисовывает карточку товара по item_id
+
+    Args:
+        user_id (str): id usera в системе
+        item_id (str): id вещи для обмена в системе
+
+    Returns:
+        _type_: страница карточка товара
+    """
 
     LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
                        'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
@@ -283,6 +297,11 @@ def card(user_id: str, item_id: str):
 
 @app.route('/donation_form')
 def show_donation_form():
+    """отрисовывает страницу для загрузки товара для пожертвования
+
+    Returns:
+        _type_: страница для пожертвования
+    """
     if not session['userLogged']:
         return redirect(url_for('sign_in'))
     return render_template("donation_form.html", email=session['userLogged'])
@@ -290,6 +309,11 @@ def show_donation_form():
 
 @app.route('/after_donation')
 def after_donation():
+    """отрисовывает страницу после успешной обработки страницы пожертовование
+
+    Returns:
+        _type_: шаблон страницы 
+    """
     if not session['userLogged']:
         return redirect(url_for('sign_in'))
 

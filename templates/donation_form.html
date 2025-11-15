@@ -757,33 +757,8 @@
                     return;
                 }
 
-                // СОЗДАЕМ И ОТПРАВЛЯЕМ FormData
-                const formData = new FormData(addItemForm);
-
-                // Отправляем данные на сервер
-                fetch('{{ url_for("add_clothes") }}', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => {
-                        if (response.redirected) {
-                            // Если сервер вернул редирект, следуем ему
-                            window.location.href = response.url;
-                        } else if (response.ok) {
-                            // Если ответ успешный, но нет редиректа, перенаправляем вручную
-                            return response.json().then(data => {
-                                window.location.href = data.redirect_url || '{{ url_for("profile", email=email) }}';
-                            });
-                        } else {
-                            return response.json().then(data => {
-                                alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Ошибка:', error);
-                        alert('Произошла ошибка при отправке формы');
-                    });
+                // Перенаправляем на страницу благодарности
+                window.location.href = 'after_donation.html';
             });
         });
     </script>

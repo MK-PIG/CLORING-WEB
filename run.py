@@ -15,14 +15,12 @@ rg = Registartor()
 app = Flask(__name__)
 DATABASE_PATH = os.environ.get('DATABASE_PATH', 'database.db')
 UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
-"""------------------------------"""
-# убрать в файл, который будет игнорироваться гитом
-# изменить secret_key
+
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', secrets.token_hex(16))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['DATABASE_PATH'] = DATABASE_PATH
-"""------------------------------"""
+
 base.create_users_table()
 base.create_table_users_items()
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -281,6 +279,23 @@ def card(user_id: str, item_id: str):
     phone_number = result_select_phone_number[0][0] if result_select_phone_number else "Нет"
 
     return render_template("card.html", item_dict=item_dict, email=email, phone_number=phone_number)
+
+
+@app.route('/donation_form')
+def show_donation_form():
+    if not session['userLogged']:
+        return redirect(url_for('sign_in'))
+    return render_template("donation_form.html", email=session['userLogged'])
+
+
+@app.route('/after_donation')
+def after_donation():
+    if not session['userLogged']:
+        return redirect(url_for('sign_in'))
+
+    # обработка формы и возможная отправка файлов по эл почте
+
+    return render_template('after_donation.html', email=session['userLogged'])
 
 
 if __name__ == '__main__':

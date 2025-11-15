@@ -153,9 +153,12 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.1);
             }
@@ -464,8 +467,9 @@
             <!-- Призыв к действию -->
             <div class="cta-section">
                 <h3>Готовы сделать еще больше добрых дел?</h3>
-                <button onclick="window.location.href='user_account.html'" class="btn btn-primary">
+                <a href="{{ url_for('profile',email=email) }}" class="btn btn-primary">
                     <i class="fas fa-user"></i> Вернуться в личный кабинет
+                </a>
                 </button>
             </div>
         </div>

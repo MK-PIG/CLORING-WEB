@@ -493,8 +493,10 @@
                 <h2 class="donation-info-title">Как работает пожертвование одежды?</h2>
             </div>
             <p class="donation-info-text">
-                Добавляя вещь на платформу CLORING, вы делаете <strong>доброе дело</strong> — даёте одежде вторую жизнь и помогаете тем, кто в ней нуждается.
-                После заполнения формы, вам откроется адрес пункта сбора одежды. Когда вы доставите одежду по месту назначения вам будут начислены баллы.
+                Добавляя вещь на платформу CLORING, вы делаете <strong>доброе дело</strong> — даёте одежде вторую жизнь
+                и помогаете тем, кто в ней нуждается.
+                После заполнения формы, вам откроется адрес пункта сбора одежды. Когда вы доставите одежду по месту
+                назначения вам будут начислены баллы.
             </p>
 
             <div class="donation-benefits">
@@ -635,7 +637,7 @@
 
                 <!-- Действия формы -->
                 <div class="form-actions">
-                    <a href="url_for('profile',email=eamil)" class="btn btn-secondary">Отмена</a>
+                    <a href="url_for('after_donation',email=eamil)" class="btn btn-secondary">Отмена</a>
                     <button type="submit" class="btn btn-primary">Пожертвовать вещь</button>
                 </div>
             </form>
@@ -761,7 +763,7 @@
                 const formData = new FormData(addItemForm);
 
                 // Отправляем данные на сервер
-                fetch('{{ url_for("add_clothes") }}', {
+                fetch('{{ url_for("after_donation") }}', {
                     method: 'POST',
                     body: formData
                 })
@@ -772,7 +774,7 @@
                         } else if (response.ok) {
                             // Если ответ успешный, но нет редиректа, перенаправляем вручную
                             return response.json().then(data => {
-                                window.location.href = data.redirect_url || '{{ url_for("profile", email=email) }}';
+                                window.location.href = data.redirect_url || '{{ url_for("after_donation") }}';
                             });
                         } else {
                             return response.json().then(data => {

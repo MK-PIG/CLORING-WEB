@@ -237,7 +237,7 @@
             text-align: center;
         }
 
-        /* часть с одеждой */
+         /* часть с одеждой */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -290,6 +290,7 @@
             color: #666;
             margin-top: 5px;
         }
+
 
 
         .content-section {
@@ -605,8 +606,8 @@
         <div class="container">
             <nav>
                 <ul>
-                    <li><a href="mainpage.html">Главная</a></li>
-                    <li><a href="catalog.html">Каталог</a></li>
+                    <li><a href="{{url_for('main')}}">Главная</a></li>
+                    <li><a href="{{url_for('catalog')}}">Каталог</a></li>
                     <li><a href="about.html">О нас</a></li>
                 </ul>
             </nav>
@@ -614,9 +615,13 @@
             <div class="logo">CLORING</div>
 
             <div class="auth-buttons">
+
                 <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
                     class="btn btn-support">Поддержать проект</button>
-                <a href="#" class="btn btn-login">Выйти</a>
+                <a href="#" class="btn btn-profile"><i class="fas fa-user"></i> Профиль</a>
+                <a href="{{url_for('logout')}}" class="btn btn-login">Выйти</a>
+
+
             </div>
         </div>
     </header>
@@ -637,8 +642,8 @@
                         <img src="https://assets.change.org/photos/3/hp/it/IFHPItnrGcpIjya-1600x900-noPad.jpg?1528918613"
                             alt="MK PIG">
                     </div>
-                    <div class="user-name">MK PIG</div>
-                    <div class="user-email">mkpig@mail.ru</div>
+                    <div class="user-name">{{username}}</div>
+                    <div class="user-email">{{email}}</div>
                 </div>
 
                 <ul class="sidebar-menu">
@@ -658,7 +663,7 @@
                             <div class="stat-label">Всего вещей</div>
                         </div>
                     </div>
-                    <div class="stat-value">11</div>
+                    <div class="stat-value">{{len_list_of_items}}</div>
                 </div>
 
                 <!-- Блок с баллами -->
@@ -686,57 +691,33 @@
                     <div class="stat-value">0</div>
                 </div>
 
+
                 <div class="content-section">
                     <div class="section-header">
                         <div class="section-title">Последние вещи</div>
-                        <a href="#" class="btn btn-primary">Добавить вещь</a>
+                        <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Добавить
+                            вещь</a>
                     </div>
-
+                    <!-- ОДИН контейнер для всей сетки -->
                     <div class="items-grid">
+                        {% for item_dict in list_of_items %}
+                        <!-- МНОГО карточек внутри одной сетки -->
                         <div class="item-card">
                             <div class="item-image">
-                                <img src="https://avatars.mds.yandex.net/i?id=4f37e93176fc236a5c6a5d852046ce01_l-5235948-images-thumbs&n=13"
-                                    alt="Синее платье">
+                                <img src="{{ url_for('static', filename='uploads/' + item_dict['clothes_link_to_photo']) }}"
+                                    alt="{{ item_dict['clothes_name'] }}">
                             </div>
                             <div class="item-info">
-                                <div class="item-name">Синее платье</div>
+                                <div class="item-name">{{item_dict['clothes_name']}}</div>
                                 <span class="item-status status-approved">Одобрено</span>
                             </div>
                         </div>
-
-                        <div class="item-card">
-                            <div class="item-image">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">Кожаная куртка</div>
-                                <span class="item-status status-pending">На модерации</span>
-                            </div>
-                        </div>
-
-                        <div class="item-card">
-                            <div class="item-image">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">Джинсы</div>
-                                <span class="item-status status-approved">Одобрено</span>
-                            </div>
-                        </div>
-
-                        <div class="item-card">
-                            <div class="item-image">
-                                <img src="https://cdn.dsmcdn.com/ty1387/product/media/images/prod/QC/20240627/20/4949839f-485f-31c9-a60a-09c4b86e488f/1_org_zoom.jpg"
-                                    alt="Красная блузка">
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">Красная блузка</div>
-                                <span class="item-status status-rejected">Отклонено</span>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
+
                 </div>
             </div>
+        </div>
         </div>
     </section>
 
@@ -759,12 +740,12 @@
 
             <div class="form-group">
                 <label class="form-label" for="user-email">Электронная почта</label>
-                <input type="email" class="form-input" id="user-email" value="mkpig@mail.ru">
+                <input type="email" class="form-input" id="user-email" name="emai" value={{email}}>
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="user-phone">Номер телефона</label>
-                <input type="tel" class="form-input" id="user-phone" value="+7 (900) 000-00-00">
+                <input type="tel" class="form-input" id="user-phone" name="phone" value={{phone_number}}>
             </div>
 
             <div class="modal-actions">
@@ -792,7 +773,6 @@
 
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
             const settingsBtn = document.getElementById('settings-btn');
             const settingsModal = document.getElementById('settings-modal');
@@ -802,12 +782,19 @@
             const uploadAvatarBtn = document.getElementById('upload-avatar');
             const currentAvatar = document.getElementById('current-avatar');
 
+            // Добавляем input для загрузки файла (если его еще нет в HTML)
+            const avatarInput = document.createElement('input');
+            avatarInput.type = 'file';
+            avatarInput.id = 'avatar-input';
+            avatarInput.name = 'avatar';
+            avatarInput.accept = 'image/*';
+            avatarInput.style.display = 'none';
+            document.body.appendChild(avatarInput);
 
             settingsBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 settingsModal.style.display = 'flex';
             });
-
 
             function closeModal() {
                 settingsModal.style.display = 'none';
@@ -816,29 +803,82 @@
             modalClose.addEventListener('click', closeModal);
             cancelBtn.addEventListener('click', closeModal);
 
-
             settingsModal.addEventListener('click', function (e) {
                 if (e.target === settingsModal) {
                     closeModal();
                 }
             });
 
-
+            // Обработчик сохранения формы
             saveBtn.addEventListener('click', function () {
                 const email = document.getElementById('user-email').value;
                 const phone = document.getElementById('user-phone').value;
+                const avatarFile = avatarInput.files[0];
 
+                // Создаем FormData для отправки
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('phone', phone);
 
-                alert('Настройки успешно сохранены!');
-                closeModal();
+                if (avatarFile) {
+                    formData.append('avatar', avatarFile);
+                }
+
+                // Отправляем данные на сервер
+                fetch('/profile/update', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        // CSRF токен, если используется
+                        'X-CSRFToken': getCSRFToken() // Функция для получения CSRF токена
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Настройки успешно сохранены!');
+
+                            // Обновляем данные на странице, если нужно
+                            if (data.avatar_url) {
+                                currentAvatar.src = data.avatar_url;
+                            }
+
+                            closeModal();
+                        } else {
+                            alert('Ошибка при сохранении: ' + (data.error || 'Неизвестная ошибка'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Произошла ошибка при сохранении настроек');
+                    });
             });
 
-
+            // Обработчик загрузки аватара
             uploadAvatarBtn.addEventListener('click', function () {
-                const newAvatarUrl = 'https://avatars.mds.yandex.net/i?id=d7454a2093cc96c971aec205a6ecdebf_l-4904517-images-thumbs&n=13';
-                currentAvatar.src = newAvatarUrl;
-                alert('Аватар успешно изменен!');
+                avatarInput.click();
             });
+
+            // Превью выбранного аватара
+            avatarInput.addEventListener('change', function (e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentAvatar.src = e.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            // Функция для получения CSRF токена (если используется)
+            function getCSRFToken() {
+                const csrfToken = document.querySelector('[name=csrf_token]');
+                return csrfToken ? csrfToken.value : '';
+            }
         });
     </script>
 </body>

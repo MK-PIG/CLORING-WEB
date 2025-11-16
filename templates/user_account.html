@@ -695,8 +695,10 @@
                 <div class="content-section">
                     <div class="section-header">
                         <div class="section-title">Последние вещи</div>
-                        <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Добавить
-                            вещь</a>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="{{url_for('donation_form',email=email)}}" class="btn btn-primary">Пожертвовать вещь</a>
+                            <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Обменять вещь</a>
+                        </div>
                     </div>
                     <!-- ОДИН контейнер для всей сетки -->
                     <div class="items-grid">
@@ -714,6 +716,7 @@
                         </div>
                         {% endfor %}
                     </div>
+                </div>
 
                 </div>
             </div>

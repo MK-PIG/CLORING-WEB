@@ -13,8 +13,8 @@ aut = Autotentificator()
 base = DateBase()
 rg = Registartor()
 app = Flask(__name__)
-DATABASE_PATH = os.environ.get('DATABASE_PATH', 'database.db')
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
+DATABASE_PATH = os.environ.get('DATABASE_PATH', '/app/data/database.db')
+UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/app/static/uploads')
 
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', secrets.token_hex(16))

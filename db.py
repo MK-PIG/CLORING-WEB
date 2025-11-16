@@ -1,4 +1,5 @@
 import sqlite3 as sq
+import os
 from logger import (info_logger, er_logger)
 
 """
@@ -7,7 +8,7 @@ from logger import (info_logger, er_logger)
 
 
 class DateBase:
-    def __init__(self, db_path="./datebase.db") -> None:
+    def __init__(self, db_path=os.environ.get('DATABASE_PATH', '/app/data/database.db')) -> None:
         self.db_path = db_path
 
     def __repr__(self) -> str:

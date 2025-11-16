@@ -237,7 +237,7 @@
             text-align: center;
         }
 
-         /* часть с одеждой */
+        /* часть с одеждой */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -696,8 +696,10 @@
                     <div class="section-header">
                         <div class="section-title">Последние вещи</div>
                         <div style="display: flex; gap: 10px;">
-                            <a href="{{url_for('donation_form',email=email)}}" class="btn btn-primary">Пожертвовать вещь</a>
-                            <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Обменять вещь</a>
+                            <a href="{{url_for('show_donation_form',email=email)}}" class="btn btn-primary">Пожертвовать
+                                вещь</a>
+                            <a href="{{url_for('upload_clothes_form',email=email)}}" class="btn btn-primary">Обменять
+                                вещь</a>
                         </div>
                     </div>
                     <!-- ОДИН контейнер для всей сетки -->
@@ -718,8 +720,8 @@
                     </div>
                 </div>
 
-                </div>
             </div>
+        </div>
         </div>
         </div>
     </section>

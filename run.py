@@ -216,26 +216,35 @@ def add_clothes():
         _type_: переадресовывает пользователя в лк
     """
     if request.method == "POST":
-        file = request.files['clothes_photo']
-        if file:
-            filename = secure_filename(file.filename)  # type: ignore
-            path_to_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        try:
+            file = request.files['clothes_photo']
+            if file:
+                filename = secure_filename(file.filename)  # type: ignore
+                path_to_file = os.path.join(
+                    app.config['UPLOAD_FOLDER'], filename)
 
-        user_id = base.select('user_id', 'users',
-                              f'email="{session['userLogged']}"')[0][0]
-        keys = 'user_id, clothes_link_to_photo, '
-        values = f'"{user_id}", "{filename}", '
-        for key, value in request.form.items():
-            keys += f'{key}, '
-            values += f'"{value}", '
+            user_id = base.select('user_id', 'users',
+                                  f'email="{session['userLogged']}"')[0][0]
+            keys = ['user_id', 'clothes_link_to_photo']
+            values = [f'"{user_id}"', f'"{filename}"']
 
-        # удаляем пробел и запятую в конце
-        keys = keys[:-2]
-        values = values[:-2]
-        if base.insert('users_items', keys, values):
-            file.save(path_to_file)
-    info_logger.info(
-        "Clothing data has been added to DB. User redirected to profile.")
+            for key in ['clothes_name', 'clothes_category', 'clothes_size',
+                        'clothes_condition', 'clothes_brand', 'clothes_material',
+                        'clothes_color', 'clothes_description']:
+                if key in request.form:
+                    keys.append(key)
+                    values.append(f'"{request.form[key]}"')
+
+                    # Вставка в БД
+            if base.insert('users_items', ', '.join(keys), ', '.join(values)):
+                info_logger.info(
+                    f"Donation added. Email: {session.get('userLogged')}")
+                file.save(path_to_file)
+            info_logger.info(
+                "Clothing data has been added to DB. User redirected to profile.")
+        except Exception as e:
+            er_logger.error(f"Error in add_clothes: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)}), 500
     return redirect(url_for('profile', email=session['userLogged']))
 
 
@@ -302,24 +311,33 @@ def show_donation_form():
     Returns:
         _type_: страница для пожертвования
     """
-    if not session['userLogged']:
+    if not session.get('userLogged', False):
         return redirect(url_for('sign_in'))
-    return render_template("donation_form.html", email=session['userLogged'])
+    return render_template("donation_form.html", email=session.get('userLogged'))
 
 
-@app.route('/after_donation')
-def after_donation():
-    """отрисовывает страницу после успешной обработки страницы пожертовование
+@app.route('/after_donation/<email>', methods=['POST', 'GET'])
+def after_donation(email):
+    """пока что только говорит да или нет, но в планах разрабокти отпрравка информации по почте фонду
+
+    Args:
+        email (_type_): email пользователя
 
     Returns:
-        _type_: шаблон страницы 
+        _type_: шаблон страницы после донаната
     """
-    if not session['userLogged']:
-        return redirect(url_for('sign_in'))
+    if request.method == 'POST':
+        if not session.get('userLogged', False):
+            return redirect(url_for('sign_in'))
 
-    # обработка формы и возможная отправка файлов по эл почте
+        try:
+            return jsonify({'success': True, 'message': 'Вещь добавлена'}), 200
 
-    return render_template('after_donation.html', email=session['userLogged'])
+        except Exception as e:
+            er_logger.error(f"Error in after_donation: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+
+    return render_template('after_donation.html', email=session.get('userLogged'))
 
 
 if __name__ == '__main__':

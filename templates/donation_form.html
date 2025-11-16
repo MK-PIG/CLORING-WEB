@@ -637,7 +637,7 @@
 
                 <!-- Действия формы -->
                 <div class="form-actions">
-                    <a href="url_for('after_donation',email=eamil)" class="btn btn-secondary">Отмена</a>
+                    <a href="{{url_for('after_donation',email=eamil)}}" class="btn btn-secondary">Отмена</a>
                     <button type="submit" class="btn btn-primary">Пожертвовать вещь</button>
                 </div>
             </form>
@@ -763,7 +763,7 @@
                 const formData = new FormData(addItemForm);
 
                 // Отправляем данные на сервер
-                fetch('{{ url_for("after_donation") }}', {
+                fetch('{{ url_for("after_donation",email=email) }}', {
                     method: 'POST',
                     body: formData
                 })
@@ -774,7 +774,7 @@
                         } else if (response.ok) {
                             // Если ответ успешный, но нет редиректа, перенаправляем вручную
                             return response.json().then(data => {
-                                window.location.href = data.redirect_url || '{{ url_for("after_donation") }}';
+                                window.location.href = data.redirect_url || '{{ url_for("after_donation",email=email) }}';
                             });
                         } else {
                             return response.json().then(data => {

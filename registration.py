@@ -1,6 +1,6 @@
 from db import DateBase
 from logger import info_logger, er_logger
-
+from passwords import verfy_password, hash_password
 base = DateBase()
 
 
@@ -30,7 +30,7 @@ class Registartor:
         if not rows:
             return False
         for em, psw in rows:
-            if em == email and psw == password:
+            if em == email and verfy_password(password, psw):
                 info_logger.info(f"User has been found. Email: {email}")
                 return True
             if em == email:
@@ -48,6 +48,7 @@ class Registartor:
             bool: 
         """
         try:
+            password = hash_password(password)
             base.insert('users', 'email, password',
                         f'"{email}", "{password}"')
             info_logger.info(f"Successfully registration. Email: {email}")

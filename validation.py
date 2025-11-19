@@ -51,6 +51,11 @@ class Validator:
         if not email:
             er_logger.error(f"Incorrect format of email: {email}")
             return False
+
+        for ch in " !#$%&~=,'":
+            if ch in email:
+                return False
+
         if len(email) < 4 or len(email) > 254:
             er_logger.error(f"Incorrect format of email: {email}")
             return False

@@ -22,16 +22,17 @@ class Validator:
         if not phone_number:
             er_logger.error(f"{phone_number} does not exist")
             return False
+        for ch in '-!@#$%^&*!"№;:?':
+            if ch in phone_number:
+                return False
 
-        # Очищаем номер от пробелов, скобок, дефисов
         cleaned = re.sub(r'[\s\(\)\-+]', '', phone_number)
 
-        # Проверяем основные форматы российских номеров
         patterns = [
             r'^7\d{10}$',      # 79123456789
             r'^8\d{10}$',      # 89123456789
             r'^\+7\d{10}$',    # +79123456789
-            r'^\d{10}$'        # 9123456789 (без кода страны)
+            r'^\d{10}$'        # 9123456789
         ]
         # Где ты выкидываешь ошибку, если неверный номер звонилки?
         info_logger.info(f"{phone_number} is correct")

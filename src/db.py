@@ -2,10 +2,6 @@ import sqlite3 as sq
 import os
 from src.logger import (info_logger, er_logger)
 
-"""
-добавить в функции return bool после execute
-"""
-
 
 class DateBase:
     def __init__(self, db_path=os.environ.get('DATABASE_PATH', '/app/data/database.db')) -> None:

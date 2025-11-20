@@ -7,22 +7,19 @@ from src.validation import Validator
 import os
 import secrets
 from src.logger import (info_logger, er_logger)
-"""1 создать папку src для pyhton файлов +
- 2 создать volume для логов +
- 3 создание качесвтенного ридми +
- 4 обработка ошибок +
- 5 логирование функций +
- 6 dockstrings +
- 7 сфера знания +
- 8 запись файлов в бд 
-"""
+
 valid = Validator()
 aut = Autotentificator()
 base = DateBase()
 rg = Registartor()
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+app = Flask(__name__,
+            template_folder=os.path.join(BASE_DIR, 'templates'),
+            static_folder=os.path.join(BASE_DIR, 'static'))
 DATABASE_PATH = os.environ.get('DATABASE_PATH', '/app/data/database.db')
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/app/static/uploads')
+UPLOAD_FOLDER = os.environ.get(
+    'UPLOAD_FOLDER', os.path.join(BASE_DIR, '/app/static/uploads'))
 
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', secrets.token_hex(16))
@@ -199,10 +196,10 @@ def logout():
     Returns:
         _type_: отрисовывает шаблон главной страницы
     """
-    if session['userLogged']:
-        session.pop('userLogged', None)
-    if session['phone_number']:
-        session.pop('phone_number', None)
+
+    session.pop('userLogged', None)
+
+    session.pop('phone_number', None)
     info_logger.info(
         "User has been log out. Deleted from active session. Redirected to main page")
     return render_template('main.html')
@@ -233,12 +230,25 @@ def add_clothes():
         try:
             file = request.files['clothes_photo']
             if file:
-                filename = secure_filename(file.filename)  # type: ignore
-                path_to_file = os.path.join(
-                    app.config['UPLOAD_FOLDER'], filename)
+                user_id = base.select('user_id', 'users',
+                                      f'email="{session['userLogged']}"')[0][0]
+                resultlast_item_id = base.select(
+                    'item_id', 'users_items')
+                last_item_id = int(
+                    resultlast_item_id[-1][0]) if resultlast_item_id else None
+                if last_item_id:
+                    filename = secure_filename(file.filename)  # type: ignore
+                    filename = str(last_item_id+1)+'.'+filename.split('.')[1]
 
-            user_id = base.select('user_id', 'users',
-                                  f'email="{session['userLogged']}"')[0][0]
+                    path_to_file = os.path.join(
+                        app.config['UPLOAD_FOLDER'], filename)
+                else:
+                    filename = secure_filename(file.filename)  # type: ignore
+                    filename = '1'+'.'+filename.split('.')[1]
+
+                    path_to_file = os.path.join(
+                        app.config['UPLOAD_FOLDER'], filename)
+
             keys = ['user_id', 'clothes_link_to_photo']
             values = [f'"{user_id}"', f'"{filename}"']
 

@@ -8,9 +8,9 @@ import os
 import secrets
 from src.logger import (info_logger, er_logger)
 """1 создать папку src для pyhton файлов +
- 2 создать volume для логов 
+ 2 создать volume для логов +
  3 создание качесвтенного ридми +
- 4 обработка ошибок
+ 4 обработка ошибок +
  5 логирование функций +
  6 dockstrings +
  7 сфера знания +

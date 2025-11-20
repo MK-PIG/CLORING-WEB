@@ -1,13 +1,21 @@
 from flask import Flask, jsonify, render_template, url_for, request, session, redirect, abort
 from werkzeug.utils import secure_filename
-from registration import Registartor
-from db import DateBase
-from autotentification import Autotentificator
-from validation import Validator
+from src.registration import Registartor
+from src.db import DateBase
+from src.autotentification import Autotentificator
+from src.validation import Validator
 import os
 import secrets
-from logger import (info_logger, er_logger)
-
+from src.logger import (info_logger, er_logger)
+"""1 создать папку src для pyhton файлов +
+ 2 создать volume для логов 
+ 3 создание качесвтенного ридми +
+ 4 обработка ошибок
+ 5 логирование функций
+ 6 dockstrings +
+ 7 сфера знания
+ 8 запись файлов в бд
+"""
 valid = Validator()
 aut = Autotentificator()
 base = DateBase()
@@ -102,7 +110,7 @@ def profile(email):
         email (_type_): электроная почта (логин) пользователя
         если пользователь через адресную строку пытается попать в чужой лк, то abort-им ошибку доступа 401
     Returns:
-        _type_: _description_
+        _type_: шаблон страницы 
     """
     # если пользователь не в сессии - то не даем юзеру доступ к изменению url
     if 'userLogged' not in session or session['userLogged'] != email:
@@ -137,7 +145,7 @@ def update_profile():
     """служит для обновления/ добаления данных пользователя в личном кабинете
 
     Returns:
-        _type_: ничего
+        _type_:   ничего
     """
     try:
         old_email = session.get('userLogged')
@@ -202,7 +210,7 @@ def upload_clothes_form(email):
         email (_type_): эл почта пользователя
 
     Returns:
-        _type_: шаблон формы для зааполнения
+        _type_: шаблон формы для заполнения
     """
     info_logger.info(f"Clothing page has been rendered. Email: {email}")
     return render_template('upload_form.html', email=email)
@@ -253,7 +261,7 @@ def catalog():
     """отрисовывает страницу каталога с отображением всех вещей других пользователя, кроме вещей текущего
 
     Returns:
-        _type_: страницу каталога
+        _type_: шаблон страницы каталога
     """
     if not session.get('userLogged', False):
         return redirect(url_for('sign_in'))
@@ -284,7 +292,7 @@ def card(user_id: str, item_id: str):
         item_id (str): id вещи для обмена в системе
 
     Returns:
-        _type_: страница карточка товара
+        _type_: шаблон страницы карточка товара
     """
 
     LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
@@ -309,7 +317,7 @@ def show_donation_form():
     """отрисовывает страницу для загрузки товара для пожертвования
 
     Returns:
-        _type_: страница для пожертвования
+        _type_: шаблон страницы для пожертвования
     """
     if not session.get('userLogged', False):
         return redirect(url_for('sign_in'))
@@ -338,6 +346,16 @@ def after_donation(email):
             return jsonify({'success': False, 'message': str(e)}), 500
 
     return render_template('after_donation.html', email=session.get('userLogged'))
+
+
+@app.route('/about')
+def about():
+    """отрисовывает страницу о нас
+
+    Returns:
+        _type_: шаблон страницы
+    """
+    return render_template('about.html')
 
 
 if __name__ == '__main__':

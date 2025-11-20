@@ -28,4 +28,4 @@ USER webuser
 
 EXPOSE 5000
 
-CMD ["python","run.py"]
+CMD ["python","src/run.py"]

@@ -1,5 +1,5 @@
 import re
-from logger import (info_logger, er_logger)
+from src.logger import (info_logger, er_logger)
 
 
 class Validator:

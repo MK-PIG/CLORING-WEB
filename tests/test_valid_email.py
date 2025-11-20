@@ -2,7 +2,6 @@ from validation import Validator
 
 validator = Validator()
 
-
 def test_correct_email_1():
     assert validator.check_correction_email('some@mail.ru') == True
 

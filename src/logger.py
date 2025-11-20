@@ -2,7 +2,7 @@ import logging
 import os
 LOG_DIR = os.environ.get('LOG_DIR', '/app/data')
 os.makedirs(LOG_DIR, exist_ok=True)
-LOG_FILE = os.path.join("LOG_DIR", 'CLORING.log')
+LOG_FILE = os.path.join(LOG_DIR, 'CLORING.log')
 
 
 def setup_info_logger():

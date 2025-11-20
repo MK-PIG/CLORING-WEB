@@ -21,6 +21,7 @@ RUN chown -R webuser:webuser /app
 ENV LOG_DIR=/app/data
 ENV DATABASE_PATH=/app/data/database.db
 ENV UPLOAD_FOLDER=/app/static/uploads
+ENV PYTHONPATH=/app
 
 VOLUME /app/data
 VOLUME /app/static/uploads

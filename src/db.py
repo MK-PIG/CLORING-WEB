@@ -1,10 +1,6 @@
 import sqlite3 as sq
 import os
-from logger import (info_logger, er_logger)
-
-"""
-добавить в функции return bool после execute
-"""
+from src.logger import (info_logger, er_logger)
 
 
 class DateBase:

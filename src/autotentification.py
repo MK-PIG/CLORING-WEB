@@ -1,6 +1,6 @@
-from db import DateBase
-from logger import (info_logger, er_logger)
-from passwords import verfy_password, hash_password
+from src.db import DateBase
+from src.logger import (info_logger, er_logger)
+from src.passwords import verfy_password
 base = DateBase()
 
 

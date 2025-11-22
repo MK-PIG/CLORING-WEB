@@ -18,8 +18,10 @@ RUN chown -R webuser:webuser /app
 
 
 # переменная окружения для пути в бд
+ENV LOG_DIR=/app/data
 ENV DATABASE_PATH=/app/data/database.db
 ENV UPLOAD_FOLDER=/app/static/uploads
+ENV PYTHONPATH=/app
 
 VOLUME /app/data
 VOLUME /app/static/uploads
@@ -28,4 +30,4 @@ USER webuser
 
 EXPOSE 5000
 
-CMD ["python","run.py"]
+CMD ["python","src/run.py"]

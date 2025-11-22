@@ -1,4 +1,4 @@
-from validation import Validator
+from src.validation import Validator
 validator = Validator()
 
 

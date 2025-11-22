@@ -1,20 +1,25 @@
 from flask import Flask, jsonify, render_template, url_for, request, session, redirect, abort
 from werkzeug.utils import secure_filename
-from registration import Registartor
-from db import DateBase
-from autotentification import Autotentificator
-from validation import Validator
+from src.registration import Registartor
+from src.db import DateBase
+from src.autotentification import Autotentificator
+from src.validation import Validator
 import os
 import secrets
-from logger import (info_logger, er_logger)
+from src.logger import (info_logger, er_logger)
 
 valid = Validator()
 aut = Autotentificator()
 base = DateBase()
 rg = Registartor()
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+app = Flask(__name__,
+            template_folder=os.path.join(BASE_DIR, 'templates'),
+            static_folder=os.path.join(BASE_DIR, 'static'))
 DATABASE_PATH = os.environ.get('DATABASE_PATH', '/app/data/database.db')
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/app/static/uploads')
+UPLOAD_FOLDER = os.environ.get(
+    'UPLOAD_FOLDER', os.path.join(BASE_DIR, '/app/static/uploads'))
 
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', secrets.token_hex(16))
@@ -102,34 +107,38 @@ def profile(email):
         email (_type_): электроная почта (логин) пользователя
         если пользователь через адресную строку пытается попать в чужой лк, то abort-им ошибку доступа 401
     Returns:
-        _type_: _description_
+        _type_: шаблон страницы 
     """
-    # если пользователь не в сессии - то не даем юзеру доступ к изменению url
-    if 'userLogged' not in session or session['userLogged'] != email:
-        er_logger.error(f"Error 401. Email: {email}")
-        abort(401)
-    if 'phone_number' in session:
-        phone_number = session['phone_number']
-    else:
-        result_select_phone_number = base.select(
-            'phone_number', 'users', f'email="{email}"')
-        phone_number = result_select_phone_number[0][0] if result_select_phone_number else ''
+    try:
+        # если пользователь не в сессии - то не даем юзеру доступ к изменению url
+        if 'userLogged' not in session or session['userLogged'] != email:
+            er_logger.error(f"Error 401. Email: {email}")
+            abort(401)
+        if 'phone_number' in session:
+            phone_number = session['phone_number']
+        else:
+            result_select_phone_number = base.select(
+                'phone_number', 'users', f'email="{email}"')
+            phone_number = result_select_phone_number[0][0] if result_select_phone_number else ''
 
-    result_select_user_id = base.select(
-        'user_id', 'users', f'email="{email}"')
-    user_id = result_select_user_id[0][0] if result_select_user_id else ''
-    LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
-                       'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
-    result_select_items = base.select(
-        ', '.join(LIST_ITEMS_KEYS), 'users_items', f'user_id="{user_id}"')
+        result_select_user_id = base.select(
+            'user_id', 'users', f'email="{email}"')
+        user_id = result_select_user_id[0][0] if result_select_user_id else ''
+        LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
+                           'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
+        result_select_items = base.select(
+            ', '.join(LIST_ITEMS_KEYS), 'users_items', f'user_id="{user_id}"')
 
-    list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
-                     for clothes_values_tuple in result_select_items]
+        list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
+                         for clothes_values_tuple in result_select_items]
 
-    username = email.split('@')[0]
-    info_logger.info(
-        f"User has been redirected to personal account. Email: {email}, username: {username}, phone number: {phone_number}")
-    return render_template('user_account.html', email=email, username=username, phone_number=phone_number, list_of_items=list_of_items, len_list_of_items=len(list_of_items))
+        username = email.split('@')[0]
+        info_logger.info(
+            f"User has been redirected to personal account. Email: {email}, username: {username}, phone number: {phone_number}")
+        return render_template('user_account.html', email=email, username=username, phone_number=phone_number, list_of_items=list_of_items, len_list_of_items=len(list_of_items))
+    except Exception as e:
+        er_logger.error(f"ERROR: from profile {e}")
+        return redirect(url_for('main'))
 
 
 @app.route('/profile/update', methods=['POST'])
@@ -137,7 +146,7 @@ def update_profile():
     """служит для обновления/ добаления данных пользователя в личном кабинете
 
     Returns:
-        _type_: ничего
+        _type_:   ничего
     """
     try:
         old_email = session.get('userLogged')
@@ -187,7 +196,9 @@ def logout():
     Returns:
         _type_: отрисовывает шаблон главной страницы
     """
+
     session.pop('userLogged', None)
+
     session.pop('phone_number', None)
     info_logger.info(
         "User has been log out. Deleted from active session. Redirected to main page")
@@ -202,7 +213,7 @@ def upload_clothes_form(email):
         email (_type_): эл почта пользователя
 
     Returns:
-        _type_: шаблон формы для зааполнения
+        _type_: шаблон формы для заполнения
     """
     info_logger.info(f"Clothing page has been rendered. Email: {email}")
     return render_template('upload_form.html', email=email)
@@ -219,12 +230,25 @@ def add_clothes():
         try:
             file = request.files['clothes_photo']
             if file:
-                filename = secure_filename(file.filename)  # type: ignore
-                path_to_file = os.path.join(
-                    app.config['UPLOAD_FOLDER'], filename)
+                user_id = base.select('user_id', 'users',
+                                      f'email="{session['userLogged']}"')[0][0]
+                resultlast_item_id = base.select(
+                    'item_id', 'users_items')
+                last_item_id = int(
+                    resultlast_item_id[-1][0]) if resultlast_item_id else None
+                if last_item_id:
+                    filename = secure_filename(file.filename)  # type: ignore
+                    filename = str(last_item_id+1)+'.'+filename.split('.')[1]
 
-            user_id = base.select('user_id', 'users',
-                                  f'email="{session['userLogged']}"')[0][0]
+                    path_to_file = os.path.join(
+                        app.config['UPLOAD_FOLDER'], filename)
+                else:
+                    filename = secure_filename(file.filename)  # type: ignore
+                    filename = '1'+'.'+filename.split('.')[1]
+
+                    path_to_file = os.path.join(
+                        app.config['UPLOAD_FOLDER'], filename)
+
             keys = ['user_id', 'clothes_link_to_photo']
             values = [f'"{user_id}"', f'"{filename}"']
 
@@ -253,26 +277,31 @@ def catalog():
     """отрисовывает страницу каталога с отображением всех вещей других пользователя, кроме вещей текущего
 
     Returns:
-        _type_: страницу каталога
+        _type_: шаблон страницы каталога
     """
-    if not session.get('userLogged', False):
-        return redirect(url_for('sign_in'))
-    email = session['userLogged']
+    try:
+        if not session.get('userLogged', False):
+            return redirect(url_for('sign_in'))
+        email = session['userLogged']
 
-    result_select_user_id = base.select(
-        'user_id', 'users', f'email="{email}"')
-    user_id = result_select_user_id[0][0] if result_select_user_id else ''
+        result_select_user_id = base.select(
+            'user_id', 'users', f'email="{email}"')
+        user_id = result_select_user_id[0][0] if result_select_user_id else ''
 
-    LIST_ITEMS_KEYS = ['clothes_name',
-                       'clothes_link_to_photo', 'user_id', 'item_id']
+        LIST_ITEMS_KEYS = ['clothes_name',
+                           'clothes_link_to_photo', 'user_id', 'item_id']
 
-    result_select_items = base.select(
-        ', '.join(LIST_ITEMS_KEYS), 'users_items', f'user_id!="{user_id}"')
+        result_select_items = base.select(
+            ', '.join(LIST_ITEMS_KEYS), 'users_items', f'user_id!="{user_id}"')
 
-    list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
-                     for clothes_values_tuple in result_select_items]
+        list_of_items = [dict(zip(LIST_ITEMS_KEYS, clothes_values_tuple))
+                         for clothes_values_tuple in result_select_items]
+        info_logger.info(f"User {email} visited page catalog")
 
-    return render_template('catalog.html', email=session['userLogged'], list_of_items=list_of_items)
+        return render_template('catalog.html', email=email, list_of_items=list_of_items)
+    except Exception as e:
+        er_logger.error(f"ERROR: from catalog {e}")
+        return redirect(url_for('main'))
 
 
 @app.route('/card/<user_id>/<item_id>')
@@ -284,24 +313,28 @@ def card(user_id: str, item_id: str):
         item_id (str): id вещи для обмена в системе
 
     Returns:
-        _type_: страница карточка товара
+        _type_: шаблон страницы карточка товара
     """
+    try:
 
-    LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
-                       'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
+        LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
+                           'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
 
-    result_select_item = base.select(
-        ', '.join(LIST_ITEMS_KEYS), 'users_items', f'item_id="{item_id}"')[0]
-    item_dict = dict(zip(LIST_ITEMS_KEYS, result_select_item))
-    result_select_email = base.select(
-        'email', 'users', f'user_id="{user_id}"')[0][0]
-    email = result_select_email
+        result_select_item = base.select(
+            ', '.join(LIST_ITEMS_KEYS), 'users_items', f'item_id="{item_id}"')[0]
+        item_dict = dict(zip(LIST_ITEMS_KEYS, result_select_item))
+        result_select_email = base.select(
+            'email', 'users', f'user_id="{user_id}"')[0][0]
+        email = result_select_email
 
-    result_select_phone_number = base.select(
-        'phone_number', 'users', f'user_id="{user_id}"')
-    phone_number = result_select_phone_number[0][0] if result_select_phone_number else "Нет"
-
-    return render_template("card.html", item_dict=item_dict, email=email, phone_number=phone_number)
+        result_select_phone_number = base.select(
+            'phone_number', 'users', f'user_id="{user_id}"')
+        phone_number = result_select_phone_number[0][0] if result_select_phone_number else "Нет"
+        info_logger.info(f"User {email} visited card page")
+        return render_template("card.html", item_dict=item_dict, email=email, phone_number=phone_number)
+    except Exception as e:
+        er_logger.error(f"ERROR: from card {e}")
+        return redirect(url_for('main'))
 
 
 @app.route('/donation_form')
@@ -309,10 +342,13 @@ def show_donation_form():
     """отрисовывает страницу для загрузки товара для пожертвования
 
     Returns:
-        _type_: страница для пожертвования
+        _type_: шаблон страницы для пожертвования
     """
     if not session.get('userLogged', False):
         return redirect(url_for('sign_in'))
+
+    info_logger.info(
+        f"User {session.get('userLogged')} visited page donation_form")
     return render_template("donation_form.html", email=session.get('userLogged'))
 
 
@@ -331,6 +367,8 @@ def after_donation(email):
             return redirect(url_for('sign_in'))
 
         try:
+            info_logger.info(
+                f"User {email} successfully send donation_form info")
             return jsonify({'success': True, 'message': 'Вещь добавлена'}), 200
 
         except Exception as e:
@@ -338,6 +376,17 @@ def after_donation(email):
             return jsonify({'success': False, 'message': str(e)}), 500
 
     return render_template('after_donation.html', email=session.get('userLogged'))
+
+
+@app.route('/about')
+def about():
+    """отрисовывает страницу о нас
+
+    Returns:
+        _type_: шаблон страницы
+    """
+    info_logger.info(f"User visited page about")
+    return render_template('about.html')
 
 
 if __name__ == '__main__':

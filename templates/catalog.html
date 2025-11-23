@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLORING - каталог</title>
+    <title>Каталог</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,9 +19,6 @@
     <link rel="manifest" href="data:application/json,{}">
     <meta name="theme-color" content="#2e8b57">
 
-
-
-    <!-- тут css начинается -->
     <style>
         * {
             margin: 0;
@@ -157,6 +154,10 @@
             padding: 0 20px;
         }
 
+        .dashboard-filter {
+            /* Добавлен отсутствующий класс */
+        }
+
         .sidebar {
             background: white;
             border-radius: 10px;
@@ -281,7 +282,8 @@
             font-size: 18px;
             font-weight: 600;
             color: #88a998;
-            padding: 1, 5%;
+            padding: 1% 5%; /* ИСПРАВЛЕНО */
+            margin-bottom: 10px;
         }
 
         .item-card {
@@ -289,6 +291,7 @@
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .attr-card {
@@ -298,6 +301,7 @@
             padding: 5%;
             overflow: hidden;
             transition: transform 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .attr-card:hover {
@@ -456,9 +460,8 @@
         </div>
         <div class="dashboard-content">
             <div class="dashboard-filter">
-                <!-- панель с фильтрами-->
-                <ul class="sidebar-menu">
-
+                <!-- ИСПРАВЛЕННАЯ структура фильтров -->
+                <div class="sidebar-menu">
                     <div class="attr-card">
                         <div class="attr-title">
                             Для кого
@@ -466,10 +469,11 @@
                         <div class="">
                             <div><label><input type="checkbox" />Женская одежда</label></div>
                             <div><label><input type="checkbox" />Мужская одежда</label></div>
-                            <div><label><input type="checkbox" />Детская одежда</label></div>
                             <div><label><input type="checkbox" />Одежда для мальчиков</label></div>
                             <div><label><input type="checkbox" />Одежда для девочек</label></div>
-
+                            <div><label><input type="checkbox" />Женская обувь</label></div>
+                            <div><label><input type="checkbox" />Мужская обувь</label></div>
+                            <div><label><input type="checkbox" />Детская обувь</label></div>
                         </div>
                     </div>
 
@@ -482,33 +486,49 @@
                             <div><label><input type="checkbox" />Рубашки</label></div>
                             <div><label><input type="checkbox" />Джинсы</label></div>
                             <div><label><input type="checkbox" />Куртки</label></div>
-                            <div><input type="checkbox" />Свитеры</div>
-                            <div><input type="checkbox" />Футболки</div>
-                            <div><input type="checkbox" />Юбки</div>
-
+                            <div><label><input type="checkbox" />Свитеры</label></div>
+                            <div><label><input type="checkbox" />Футболки</label></div>
+                            <div><label><input type="checkbox" />Юбки</label></div>
+                            <div><label><input type="checkbox" />Сапоги</label></div>
+                            <div><label><input type="checkbox" />Ботинки</label></div>
+                            <div><label><input type="checkbox" />Босоножки</label></div>
+                            <div><label><input type="checkbox" />Кроссовки</label></div>
+                            <div><label><input type="checkbox" />Туфли</label></div>
                         </div>
                     </div>
+                    
                     <div class="attr-card">
                         <div class="attr-title">
                             Размер
                         </div>
                         <div class="size-grid">
-                            <div><label><input type="checkbox" />XXS</label></div>
-                            <div><label><input type="checkbox" />XS</label></div>
-                            <div><label><input type="checkbox" />S</label></div>
-                            <div><label><input type="checkbox" />M</label></div>
-                            <div><input type="checkbox" />L</div>
-                            <div><input type="checkbox" />XL</div>
-                            <div><input type="checkbox" />XXL</div>
+                            <div><label><input type="checkbox" />XXS - 40(RU) - 6(USA) - 34(EU)</label></div>
+                            <div><label><input type="checkbox" />XS - 42(RU) - 8(USA) - 36(EU)</label></div>
+                            <div><label><input type="checkbox" />S - 44(RU) - 10(USA) - 38(EU)</label></div>
+                            <div><label><input type="checkbox" />M - 46(RU) - 12(USA) - 40(EU)</label></div>
+                            <div><label><input type="checkbox" />L - 48-50(RU) - 14-16(USA) - 42-44(EU)</label></div>
+                            <div><label><input type="checkbox" />XL - 52-54(RU) - 18-20(USA) - 46-48(EU)</label></div>
+                            <div><label><input type="checkbox" />XXL - 56(RU) - 22(USA) - 50(EU)</label></div>
+                            <div><label><input type="checkbox" />3XL - 58(RU) - 24(USA) - 52(EU)</label></div>
+                            <div><label><input type="checkbox" />4XL - 60(RU) - 26(USA) - 54(EU)</label></div>
+                            <div><label><input type="checkbox" />36(RU) - 5(USA) - 37(EU)</label></div>
+                            <div><label><input type="checkbox" />37(RU) - 6(USA) - 38(EU)</label></div>
+                            <div><label><input type="checkbox" />38(RU) - 7(USA) - 39(EU)</label></div>
+                            <div><label><input type="checkbox" />39(RU) - 8(USA) - 40(EU)</label></div>
+                            <div><label><input type="checkbox" />40(RU) - 9(USA) - 41(EU)</label></div>
+                            <div><label><input type="checkbox" />41(RU) - 10(USA) - 42(EU)</label></div>
+                            <div><label><input type="checkbox" />42(RU) - 11(USA) - 43(EU)</label></div>
+                            <div><label><input type="checkbox" />43(RU) - 12(USA) - 44(EU)</label></div>
+                            <div><label><input type="checkbox" />44(RU) - 13(USA) - 45(EU)</label></div>
+                            <div><label><input type="checkbox" />45(RU) - 14(USA) - 46(EU)</label></div>
                         </div>
                     </div>
-
-                </ul>
+                </div>
             </div>
 
             <div class="main-content">
-                {% for item_dict in list_of_items %}
                 <div class="items-grid">
+                    {% for item_dict in list_of_items %}
                     <div class="item-card">
                         <div class="item-image">
                             <img src="{{ url_for('static', filename='uploads/' + item_dict['clothes_link_to_photo']) }}"
@@ -520,8 +540,7 @@
                                 class="item-status">Перейти в карточку товару</a>
                         </div>
                     </div>
-                    {%endfor%}
-
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -534,5 +553,4 @@
         </div>
     </footer>
 </body>
-
 </html>

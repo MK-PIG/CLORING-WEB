@@ -282,7 +282,8 @@
             font-size: 18px;
             font-weight: 600;
             color: #88a998;
-            padding: 1% 5%; /* ИСПРАВЛЕНО */
+            padding: 1% 5%;
+            /* ИСПРАВЛЕНО */
             margin-bottom: 10px;
         }
 
@@ -448,7 +449,8 @@
             <div class="auth-buttons">
                 <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
                     class="btn btn-support">Поддержать проект</button>
-                <a href="#" class="btn btn-profile"><i class="fas fa-user"></i> Профиль</a>
+                <a href="{{url_for('profile',email=email)}}" class="btn btn-profile"><i class="fas fa-user"></i>
+                    Профиль</a>
                 <a href="{{url_for('profile',email=email)}}" class="btn btn-register">{{email}}</a>
             </div>
         </div>
@@ -496,7 +498,7 @@
                             <div><label><input type="checkbox" />Туфли</label></div>
                         </div>
                     </div>
-                    
+
                     <div class="attr-card">
                         <div class="attr-title">
                             Размер
@@ -553,4 +555,5 @@
         </div>
     </footer>
 </body>
+
 </html>

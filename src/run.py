@@ -95,8 +95,9 @@ def main():
     Returns:
         _type_: возвращает шаблон главной страницы
     """
+    email = session.get('userLogged', None)
     info_logger.info("Render main page")
-    return render_template('main.html')
+    return render_template('main.html', email=email)
 
 
 @app.route('/profile/<email>')

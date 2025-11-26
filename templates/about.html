@@ -348,8 +348,15 @@
             <div class="auth-buttons">
                 <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
                     class="btn btn-support">Поддержать проект</button>
+
+                {% if not email%}
                 <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
                 <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
+                {% else %}
+                <a href="{{url_for('profile',email=email)}}" class="btn btn-profile"><i class="fas fa-user"></i>
+                    Профиль</a>
+                <a href="{{url_for('profile',email=email)}}" class="btn btn-register">{{email}}</a>
+                {% endif %}
             </div>
         </div>
     </header>

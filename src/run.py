@@ -4,6 +4,7 @@ from src.registration import Registartor
 from src.db import DateBase
 from src.autotentification import Autotentificator
 from src.validation import Validator
+from src.constants import VALIDATOR_FUNC
 import os
 import secrets
 from src.logger import (info_logger, er_logger)
@@ -257,8 +258,12 @@ def add_clothes():
                         'clothes_condition', 'clothes_brand', 'clothes_material',
                         'clothes_color', 'clothes_description']:
                 if key in request.form:
-                    keys.append(key)
-                    values.append(f'"{request.form[key]}"')
+                    if VALIDATOR_FUNC[key](request.form[key]):
+                        keys.append(key)
+                        values.append(f'"{request.form[key]}"')
+                    else:
+                        raise ValueError(
+                            f"Неверный формат поля {key}: {request.form[key]}")
 
                     # Вставка в БД
             if base.insert('users_items', ', '.join(keys), ', '.join(values)):

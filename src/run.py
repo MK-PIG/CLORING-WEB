@@ -386,8 +386,9 @@ def about():
     Returns:
         _type_: шаблон страницы
     """
+    email = session.get('userLogged', None)
     info_logger.info(f"User visited page about")
-    return render_template('about.html')
+    return render_template('about.html', email=email)
 
 
 if __name__ == '__main__':

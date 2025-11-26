@@ -258,12 +258,16 @@ def add_clothes():
                         'clothes_condition', 'clothes_brand', 'clothes_material',
                         'clothes_color', 'clothes_description']:
                 if key in request.form:
-                    if VALIDATOR_FUNC[key](request.form[key]):
+                    if key in VALIDATOR_FUNC.keys():
+                        if VALIDATOR_FUNC[key](request.form[key]):
+                            keys.append(key)
+                            values.append(f'"{request.form[key]}"')
+                        else:
+                            raise ValueError(
+                                f"Неверный формат поля {key}: {request.form[key]}")
+                    else:
                         keys.append(key)
                         values.append(f'"{request.form[key]}"')
-                    else:
-                        raise ValueError(
-                            f"Неверный формат поля {key}: {request.form[key]}")
 
                     # Вставка в БД
             if base.insert('users_items', ', '.join(keys), ', '.join(values)):

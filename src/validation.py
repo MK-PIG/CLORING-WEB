@@ -69,3 +69,130 @@ class Validator:
 
         info_logger.info(f"Email is correct: {email}")
         return True
+
+    def check_clothes_name(self, clothes_name: str | None) -> bool:  # type: ignore
+        """Проверяет корректность названия одежды
+
+        Args:
+            clothes_name (str): название одежды
+
+        Returns:
+            bool: Возвращает True если название корректно, False в ином случае
+        """
+        if not clothes_name:
+            er_logger.error(
+                f"Incorrect format of clothes_name: {clothes_name}")
+            return False
+
+        # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
+        # пробелы (не в начале) и дефисы
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-]*$'
+        if not re.match(pattern, clothes_name):
+            er_logger.error(
+                f"Incorrect format of clothes_name: {clothes_name}")
+            return False
+
+        info_logger.info(f"Clothes name is correct: {clothes_name}")
+        return True
+
+    def check_clothes_brand(self, clothes_brand: str | None) -> bool:  # type: ignore
+        """Проверяет корректность бренда одежды
+
+        Args:
+            clothes_brand (str): бренд одежды
+
+        Returns:
+            bool: Возвращает True если бренд корректен, False в ином случае
+        """
+        if not clothes_brand:
+            er_logger.error(
+                f"Incorrect format of clothes_brand: {clothes_brand}")
+            return False
+
+        # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
+        # пробелы (не в начале) и спец символы
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-\&*#$%&!~?+=]*$'
+        if not re.match(pattern, clothes_brand):
+            er_logger.error(
+                f"Incorrect format of clothes_brand: {clothes_brand}")
+            return False
+
+        info_logger.info(f"Clothes brand is correct: {clothes_brand}")
+        return True
+
+    def check_clothes_material(self, clothes_material: str | None) -> bool:  # type: ignore
+        """Проверяет корректность материала одежды
+
+        Args:
+            clothes_material (str): материал одежды
+
+        Returns:
+            bool: Возвращает True если материал корректен, False в ином случае
+        """
+        if not clothes_material:
+            er_logger.error(
+                f"Incorrect format of clothes_material: {clothes_material}")
+            return False
+
+        # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
+        # пробелы (не в начале) и %
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\%]*$'
+        if not re.match(pattern, clothes_material):
+            er_logger.error(
+                f"Incorrect format of clothes_material: {clothes_material}")
+            return False
+
+        info_logger.info(f"Clothes material is correct: {clothes_material}")
+        return True
+
+    def check_clothes_color(self, clothes_color: str | None) -> bool:  # type: ignore
+        """Проверяет корректность цвета одежды
+
+        Args:
+            clothes_color (str): цвет одежды
+
+        Returns:
+            bool: Возвращает True если цвет корректен, False в ином случае
+        """
+        if not clothes_color:
+            er_logger.error(
+                f"Incorrect format of clothes_color: {clothes_color}")
+            return False
+
+        # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
+        # пробелы (не в начале) и дефисы
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-]*$'
+        if not re.match(pattern, clothes_color):
+            er_logger.error(
+                f"Incorrect format of clothes_color: {clothes_color}")
+            return False
+
+        info_logger.info(f"Clothes color is correct: {clothes_color}")
+        return True
+
+    # type: ignore
+    def check_clothes_description(self, clothes_description: str | None) -> bool:
+        """Проверяет корректность описания одежды
+
+        Args:
+            clothes_description (str): описание одежды
+
+        Returns:
+            bool: Возвращает True если описание корректно, False в ином случае
+        """
+        if not clothes_description:
+            er_logger.error(
+                f"Incorrect format of clothes_description: {clothes_description}")
+            return False
+
+        # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
+        # пробелы (не в начале) и дефисы
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-.]*$'
+        if not re.match(pattern, clothes_description):
+            er_logger.error(
+                f"Incorrect format of clothes_description: {clothes_description}")
+            return False
+
+        info_logger.info(
+            f"Clothes description is correct: {clothes_description}")
+        return True

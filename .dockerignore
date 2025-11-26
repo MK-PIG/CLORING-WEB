@@ -20,3 +20,7 @@ instance/
 .mypy_cache/
 .circleci/
 .gitlab-ci.yml
+tests/
+test_*
+*_test.py
+conftest.py

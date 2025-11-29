@@ -2,6 +2,7 @@ import re
 from src.logger import (info_logger, er_logger)
 
 
+
 class Validator:
 
     def __init__(self) -> None:

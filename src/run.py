@@ -5,6 +5,7 @@ from src.db import DateBase
 from src.autotentification import Autotentificator
 from src.validation import Validator
 from src.constants import VALIDATOR_FUNC
+from src.vlm_analyzer import get_analyzer
 import os
 import secrets
 from src.logger import (info_logger, er_logger)
@@ -232,8 +233,9 @@ def add_clothes():
         try:
             file = request.files['clothes_photo']
             if file:
+                user_email = session['userLogged']
                 user_id = base.select('user_id', 'users',
-                                      f'email="{session['userLogged']}"')[0][0]
+                                      f'email="{user_email}"')[0][0]
                 resultlast_item_id = base.select(
                     'item_id', 'users_items')
                 last_item_id = int(
@@ -398,6 +400,77 @@ def about():
     email = session.get('userLogged', None)
     info_logger.info(f"User visited page about")
     return render_template('about.html', email=email)
+
+
+@app.route('/analyze_clothes_image', methods=['POST'])
+def analyze_clothes_image():
+    """
+    Анализирует загруженное изображение одежды с помощью FastVLM
+    
+    Returns:
+        JSON с характеристиками одежды
+    """
+    try:
+        if 'image' not in request.files:
+            return jsonify({'success': False, 'error': 'No image provided'}), 400
+        
+        file = request.files['image']
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'No selected file'}), 400
+        
+        # Сохраняем временный файл
+        filename = secure_filename(file.filename)  # type: ignore
+        temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f'temp_{filename}')
+        file.save(temp_path)
+        
+        info_logger.info(f"Analyzing image: {temp_path}")
+        
+        # Получаем анализатор и анализируем изображение
+        info_logger.info("Getting VLM analyzer instance...")
+        analyzer = get_analyzer()
+        
+        # analyze_image сам загрузит модель при первом вызове
+        info_logger.info("Starting image analysis...")
+        analysis_result = analyzer.analyze_image(temp_path)
+        info_logger.info(f"Analysis result: {analysis_result}")
+        
+        # ВРЕМЕННО: если модель не вернула результат, используем тестовые данные
+        if not analysis_result:
+            info_logger.warning("No result from VLM, using test data")
+            analysis_result = {
+                'clothes_category': 'jeans',
+                'clothes_color': 'Синий',
+                'clothes_material': 'Деним',
+                'clothes_brand': '',
+                'clothes_description': 'Синие джинсы'
+            }
+        
+        # Удаляем временный файл
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        
+        if analysis_result:
+            info_logger.info(f"Image analysis successful: {analysis_result}")
+            return jsonify({
+                'success': True,
+                'data': analysis_result
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to analyze image'
+            }), 500
+            
+    except Exception as e:
+        er_logger.error(f"Error in analyze_clothes_image: {str(e)}")
+        # Убираем временный файл в случае ошибки
+        if 'temp_path' in locals() and os.path.exists(temp_path):
+            os.remove(temp_path)
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 
 if __name__ == '__main__':

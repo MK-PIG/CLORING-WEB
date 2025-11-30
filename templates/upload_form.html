@@ -545,7 +545,7 @@
 
                 <!-- Действия формы -->
                 <div class="form-actions">
-                    <a href="url_for('profile',email=eamil)" class="btn btn-secondary">Отмена</a>
+                    <a href="{{url_for('profile',email=email)}}" class="btn btn-secondary">Отмена</a>
                     <button type="submit" class="btn btn-primary">Добавить вещь</button>
                 </div>
             </form>
@@ -578,6 +578,119 @@
                 photoInput.click();
             });
 
+            // Функция для анализа изображения с помощью VLM
+            async function analyzeImage(file) {
+                try {
+                    console.log('Начинаем анализ изображения...');
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    // Показываем индикатор загрузки
+                    const uploadText = document.querySelector('.upload-text h3');
+                    const originalText = uploadText.textContent;
+                    uploadText.textContent = 'Анализирую изображение...';
+
+                    const response = await fetch('{{ url_for("analyze_clothes_image") }}', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    console.log('Получен ответ:', response.status);
+                    const result = await response.json();
+                    console.log('Результат анализа:', result);
+
+                    uploadText.textContent = originalText;
+
+                    if (result.success && result.data) {
+                        // Заполняем поля формы данными от VLM
+                        const data = result.data;
+                        console.log('Заполняем поля данными:', data);
+
+                        let filled = [];
+
+                        // Название вещи
+                        if (data.clothes_name) {
+                            const nameInput = document.getElementById('item-name');
+                            if (nameInput) {
+                                nameInput.value = data.clothes_name;
+                                filled.push('название');
+                                console.log('✔️ Название установлено:', data.clothes_name);
+                            }
+                        }
+
+                        if (data.clothes_category) {
+                            const categorySelect = document.getElementById('item-category');
+                            if (categorySelect) {
+                                categorySelect.value = data.clothes_category;
+                                filled.push('категория');
+                                console.log('✔️ Категория установлена:', data.clothes_category);
+                            }
+                        }
+
+                        // Состояние
+                        if (data.clothes_condition) {
+                            const conditionSelect = document.getElementById('item-condition');
+                            if (conditionSelect) {
+                                conditionSelect.value = data.clothes_condition;
+                                filled.push('состояние');
+                                console.log('✔️ Состояние установлено:', data.clothes_condition);
+                            }
+                        }
+
+                        if (data.clothes_color) {
+                            const colorInput = document.getElementById('item-color');
+                            if (colorInput) {
+                                colorInput.value = data.clothes_color;
+                                filled.push('цвет');
+                                console.log('✔️ Цвет установлен:', data.clothes_color);
+                            }
+                        }
+
+                        if (data.clothes_material) {
+                            const materialInput = document.getElementById('item-material');
+                            if (materialInput) {
+                                materialInput.value = data.clothes_material;
+                                filled.push('материал');
+                                console.log('✔️ Материал установлен:', data.clothes_material);
+                            }
+                        }
+
+                        if (data.clothes_brand) {
+                            const brandInput = document.getElementById('item-brand');
+                            if (brandInput) {
+                                brandInput.value = data.clothes_brand;
+                                filled.push('бренд');
+                                console.log('✔️ Бренд установлен:', data.clothes_brand);
+                            }
+                        }
+
+                        if (data.clothes_description) {
+                            const descInput = document.getElementById('item-description');
+                            if (descInput) {
+                                descInput.value = data.clothes_description;
+                                filled.push('описание');
+                                console.log('✔️ Описание установлено:', data.clothes_description);
+                            }
+                        }
+
+                        // Показываем уведомление об успешном анализе
+                        if (filled.length > 0) {
+                            setTimeout(() => {
+                                alert('✅ Изображение проанализировано!\n\nЗаполнено полей: ' + filled.length + '\nПроверьте форму!');
+                            }, 300);
+                        }
+                    } else if (result.warning) {
+                        console.log('Предупреждение:', result.warning);
+                    } else {
+                        console.error('Ошибка в ответе:', result);
+                    }
+
+                } catch (error) {
+                    console.error('Ошибка при анализе изображения:', error);
+                    // Не показываем ошибку пользователю, просто продолжаем без автозаполнения
+                }
+            }
+
 
             photoInput.addEventListener('change', function (e) {
                 if (e.target.files && e.target.files[0]) {
@@ -596,6 +709,9 @@
                         previewImage.src = e.target.result;
                         photoPreview.style.display = 'block';
                         photoUploadArea.style.display = 'none';
+
+                        // Анализируем изображение после загрузки
+                        analyzeImage(file);
                     }
 
                     reader.readAsDataURL(file);
@@ -642,6 +758,9 @@
                         previewImage.src = e.target.result;
                         photoPreview.style.display = 'block';
                         photoUploadArea.style.display = 'none';
+
+                        // Анализируем изображение после загрузки
+                        analyzeImage(file);
                     }
 
                     reader.readAsDataURL(file);

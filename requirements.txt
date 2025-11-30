@@ -1,2 +1,7 @@
 Flask==3.1.2
 pytest==9.0.1
+transformers>=4.40.0
+torch>=2.0.0
+pillow>=10.0.0
+accelerate>=0.30.0
+sentencepiece>=0.2.0

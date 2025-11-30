@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    image: galanovaxxx/cloring-web:latest
+    container_name: cloring-web
+    ports:
+      - "5000:5000"
+    volumes:
+      # Автообновление кода при изменениях
+      - ./src:/app/src:ro
+      - ./templates:/app/templates:ro
+      # Данные сохраняются между перезапусками
+      - ./data:/app/data
+      - ./static:/app/static
+    environment:
+      - FLASK_DEBUG=1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

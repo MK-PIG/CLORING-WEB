@@ -1,0 +1,18 @@
+
+
+services:
+  web:
+    image: bezriska/cloring-web-test:1.0.0
+    container_name: cloring-web
+    ports:
+      - "8080:5000"
+    volumes:
+      - db_data:/app/data
+      - uploads_data:/app/static/uploads
+    restart: unless-stopped
+
+volumes:
+  db_data:
+    driver: local
+  uploads_data:
+    driver: local

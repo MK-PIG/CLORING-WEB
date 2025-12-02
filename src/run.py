@@ -240,13 +240,14 @@ def add_clothes():
                     resultlast_item_id[-1][0]) if resultlast_item_id else None
                 if last_item_id:
                     filename = secure_filename(file.filename)  # type: ignore
-                    filename = str(last_item_id+1)+'.'+filename.split('.')[1]
+                    filename = str(last_item_id + 1) + '.' + \
+                        filename.split('.')[1]
 
                     path_to_file = os.path.join(
                         app.config['UPLOAD_FOLDER'], filename)
                 else:
                     filename = secure_filename(file.filename)  # type: ignore
-                    filename = '1'+'.'+filename.split('.')[1]
+                    filename = '1' + '.' + filename.split('.')[1]
 
                     path_to_file = os.path.join(
                         app.config['UPLOAD_FOLDER'], filename)

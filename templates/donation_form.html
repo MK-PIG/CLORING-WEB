@@ -783,6 +783,9 @@
                         } else {
                             alert('⚠️ Анализ выполнен, но поля не заполнены.\nПолученные данные: ' + JSON.stringify(data));
                         }
+                    } else if (result.success === false) {
+                        const message = result.message || 'Не удалось обработать изображение. Введите данные самостоятельно.';
+                        alert('⚠️ ' + message);
                     } else if (result.warning) {
                         console.log('⚠️ Предупреждение:', result.warning);
                         alert('⚠️ ' + result.warning);

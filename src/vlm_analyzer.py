@@ -1,7 +1,12 @@
 """
-Модуль для анализа изображений одежды с использованием FastVLM от Apple
+Модуль для анализа изображений одежды с использованием VLM (Vision Language Model)
+
+Использует модель BLIP от Salesforce для генерации описаний изображений одежды.
+Все результаты переводятся на русский язык с использованием расширенного словаря перевода.
+Система генерирует несколько типов описаний для более точного определения характеристик одежды.
 """
 import base64
+import re
 from typing import Dict, Optional
 from src.logger import info_logger, er_logger
 
@@ -14,23 +19,65 @@ except ImportError:
     TRANSFORMERS_AVAILABLE = False
     info_logger.warning("Transformers library not available. VLM analysis will be disabled.")
 
-try:
-    from deep_translator import GoogleTranslator
-    TRANSLATOR_AVAILABLE = True
-except ImportError:
-    TRANSLATOR_AVAILABLE = False
-    info_logger.warning("deep-translator not available. Using simple translation.")
-
 
 class ClothesVLMAnalyzer:
-    """Класс для анализа изображений одежды с помощью FastVLM"""
+    """
+    Класс для анализа изображений одежды с помощью VLM модели BLIP.
     
+    Генерирует подробные описания одежды на русском языке, включая:
+    - Цвет
+    - Тип/категорию одежды  
+    - Материал
+    - Состояние
+    - Подробное текстовое описание
+    
+    Использует несколько промптов для получения максимально точной информации.
+    """
+    
+    CATEGORY_METADATA = {
+        'jeans': {'name': 'Джинсы', 'gender': 'pl'},
+        'dress': {'name': 'Платье', 'gender': 'neut'},
+        'shirt': {'name': 'Рубашка', 'gender': 'fem'},
+        't-shirt': {'name': 'Футболка', 'gender': 'fem'},
+        'pants': {'name': 'Брюки', 'gender': 'pl'},
+        'skirt': {'name': 'Юбка', 'gender': 'fem'},
+        'jacket': {'name': 'Куртка', 'gender': 'fem'},
+        'coat': {'name': 'Пальто', 'gender': 'neut'},
+        'shoes': {'name': 'Обувь', 'gender': 'fem'},
+        'blouse': {'name': 'Блузка', 'gender': 'fem'},
+        'hoodie': {'name': 'Толстовка', 'gender': 'fem'},
+        'sweater': {'name': 'Свитер', 'gender': 'masc'},
+    }
+
+    COLOR_FORMS = {
+        'Белый': {'masc': 'Белый', 'fem': 'Белая', 'neut': 'Белое', 'pl': 'Белые'},
+        'Черный': {'masc': 'Черный', 'fem': 'Черная', 'neut': 'Черное', 'pl': 'Черные'},
+        'Голубой': {'masc': 'Голубой', 'fem': 'Голубая', 'neut': 'Голубое', 'pl': 'Голубые'},
+        'Темно-синий': {'masc': 'Темно-синий', 'fem': 'Темно-синяя', 'neut': 'Темно-синее', 'pl': 'Темно-синие'},
+        'Синий': {'masc': 'Синий', 'fem': 'Синяя', 'neut': 'Синее', 'pl': 'Синие'},
+        'Красный': {'masc': 'Красный', 'fem': 'Красная', 'neut': 'Красное', 'pl': 'Красные'},
+        'Темно-красный': {'masc': 'Темно-красный', 'fem': 'Темно-красная', 'neut': 'Темно-красное', 'pl': 'Темно-красные'},
+        'Зеленый': {'masc': 'Зеленый', 'fem': 'Зеленая', 'neut': 'Зеленое', 'pl': 'Зеленые'},
+        'Темно-зеленый': {'masc': 'Темно-зеленый', 'fem': 'Темно-зеленая', 'neut': 'Темно-зеленое', 'pl': 'Темно-зеленые'},
+        'Желтый': {'masc': 'Желтый', 'fem': 'Желтая', 'neut': 'Желтое', 'pl': 'Желтые'},
+        'Серый': {'masc': 'Серый', 'fem': 'Серая', 'neut': 'Серое', 'pl': 'Серые'},
+        'Коричневый': {'masc': 'Коричневый', 'fem': 'Коричневая', 'neut': 'Коричневое', 'pl': 'Коричневые'},
+        'Розовый': {'masc': 'Розовый', 'fem': 'Розовая', 'neut': 'Розовое', 'pl': 'Розовые'},
+        'Фиолетовый': {'masc': 'Фиолетовый', 'fem': 'Фиолетовая', 'neut': 'Фиолетовое', 'pl': 'Фиолетовые'},
+        'Оранжевый': {'masc': 'Оранжевый', 'fem': 'Оранжевая', 'neut': 'Оранжевое', 'pl': 'Оранжевые'},
+        'Бежевый': {'masc': 'Бежевый', 'fem': 'Бежевая', 'neut': 'Бежевое', 'pl': 'Бежевые'},
+        'Темно-серый': {'masc': 'Темно-серый', 'fem': 'Темно-серая', 'neut': 'Темно-серое', 'pl': 'Темно-серые'},
+        'Светло-серый': {'masc': 'Светло-серый', 'fem': 'Светло-серая', 'neut': 'Светло-серое', 'pl': 'Светло-серые'},
+    }
+
     def __init__(self):
         """Инициализация анализатора"""
         self.model = None
         self.processor = None
         self.device = None
         self.is_loaded = False
+        self._translation_cache = {}
+        self._description_cache = {}
         # НЕ загружаем модель при инициализации - она загрузится при первом вызове analyze_image
     
     def _load_model(self):
@@ -76,13 +123,29 @@ class ClothesVLMAnalyzer:
     
     def analyze_image(self, image_path: str) -> Optional[Dict[str, str]]:
         """
-        Анализирует изображение одежды и возвращает характеристики
+        Анализирует изображение одежды и возвращает характеристики на русском языке.
+        
+        Метод использует три типа генерации описаний:
+        1. Общее описание (безусловная генерация)
+        2. Детальное описание с фокусом на характеристики одежды
+        3. Описание с фокусом на цвет и тип
+        
+        Все три описания объединяются для более точного парсинга характеристик.
         
         Args:
             image_path: путь к изображению
             
         Returns:
-            Словарь с характеристиками одежды или None в случае ошибки
+            Словарь с характеристиками одежды на русском языке:
+            - clothes_category: категория (jeans, dress, t-shirt и т.д.)
+            - clothes_color: цвет на русском (Красный, Синий и т.д.)
+            - clothes_material: материал на русском (Деним, Хлопок и т.д.)
+            - clothes_brand: бренд (пока пустое поле)
+            - clothes_description: подробное описание на русском
+            - clothes_name: название вещи на русском
+            - clothes_condition: состояние (new, good, excellent, satisfactory)
+            
+            Возвращает None в случае ошибки
         """
         # Загружаем модель при первом вызове (ленивая загрузка)
         if not self.is_loaded and TRANSFORMERS_AVAILABLE:
@@ -102,22 +165,39 @@ class ClothesVLMAnalyzer:
             # Загружаем изображение
             image = Image.open(image_path).convert('RGB')
             
-            # BLIP использует conditional generation
-            # Сначала получаем общее описание
+            # Получаем несколько описаний для большей полноты
+            print("Starting BLIP caption generation...")
+            
+            # 1. Общее описание
             inputs = self.processor(image, return_tensors="pt").to(self.device)
-            
-            # Генерируем описание
             with torch.no_grad():
-                out = self.model.generate(**inputs, max_length=100)
+                out_general = self.model.generate(**inputs, max_length=80, num_beams=4)
+            caption_general = self.processor.decode(out_general[0], skip_special_tokens=True)
             
-            # Декодируем результат
-            caption = self.processor.decode(out[0], skip_special_tokens=True)
+            # 2. Детальное описание (цвет, тип, материал, стиль, состояние)
+            prompt_detail = "Describe the clothing item in detail: color, type, material, style, condition:"
+            inputs_detail = self.processor(image, prompt_detail, return_tensors="pt").to(self.device)
+            with torch.no_grad():
+                out_detail = self.model.generate(**inputs_detail, max_length=120, num_beams=4)
+            caption_detail = self.processor.decode(out_detail[0], skip_special_tokens=True)
             
-            info_logger.info(f"Generated caption: {caption}")
-            print(f"BLIP caption: {caption}")
+            # 3. Цвет и тип
+            prompt_color = "the clothing color and category:"
+            inputs_color = self.processor(image, prompt_color, return_tensors="pt").to(self.device)
+            with torch.no_grad():
+                out_color = self.model.generate(**inputs_color, max_length=60, num_beams=3)
+            caption_color = self.processor.decode(out_color[0], skip_special_tokens=True)
+            
+            info_logger.info(f"Generated captions: general='{caption_general}', detail='{caption_detail}', color='{caption_color}'")
+            print(f"BLIP captions:\n  general: {caption_general}\n  detail: {caption_detail}\n  color: {caption_color}")
+            
+            combined_caption = f"{caption_general}. {caption_detail}. {caption_color}"
             
             # Парсим описание и извлекаем данные
-            parsed_data = self._parse_caption(caption)
+            parsed_data = self._parse_caption(combined_caption)
+            if not parsed_data:
+                info_logger.warning("Parsed data is empty - possibly not clothing")
+                return None
             
             return parsed_data
             
@@ -127,7 +207,7 @@ class ClothesVLMAnalyzer:
             traceback.print_exc()
             return None
     
-    def _parse_caption(self, caption: str) -> Dict[str, str]:
+    def _parse_caption(self, caption: str) -> Optional[Dict[str, str]]:
         """
         Парсит описание от BLIP и извлекает данные об одежде
         
@@ -135,7 +215,7 @@ class ClothesVLMAnalyzer:
             caption: текстовое описание от модели
             
         Returns:
-            Словарь с извлеченными данными
+            Словарь с извлеченными данными или None если одежда не распознана
         """
         caption_lower = caption.lower()
         
@@ -182,31 +262,22 @@ class ClothesVLMAnalyzer:
             'nylon': 'Нейлон',
         }
         
-        category_names_ru = {
-            'jeans': 'Джинсы',
-            'dress': 'Платье',
-            'shirt': 'Рубашка',
-            't-shirt': 'Футболка',
-            'pants': 'Брюки',
-            'skirt': 'Юбка',
-            'jacket': 'Куртка',
-            'shoes': 'Обувь',
-        }
-        
         # Определяем категорию (по порядку приоритета)
         category = ''
-        
-        # Специальная проверка для футболки (очень важно!)
-        if any(word in caption_lower for word in ['t-shirt', 't - shirt', 'tshirt', 'tee shirt', ' tee ']):
+
+        def has_word(text: str, word: str) -> bool:
+            return re.search(r'\b{}\b'.format(re.escape(word)), text) is not None
+
+        tshirt_markers = ['t-shirt', 't - shirt', 'tshirt', 't shirt', 'tee shirt', 'tee-shirt']
+        if any(marker in caption_lower for marker in tshirt_markers) or has_word(caption_lower, 'tee') or has_word(caption_lower, 'top'):
             category = 't-shirt'
-        elif 'shirt' in caption_lower and 't' not in caption_lower[:caption_lower.index('shirt')]:
-            # Это рубашка только если нет "t" перед "shirt"
+        elif has_word(caption_lower, 'shirt') and not any(marker in caption_lower for marker in tshirt_markers):
+            category = 'shirt'
+        elif has_word(caption_lower, 'blouse'):
             category = 'shirt'
         else:
             # Остальные категории
             for cat, keywords in category_keywords.items():
-                if cat in ['t-shirt', 'shirt']:
-                    continue  # Уже проверили выше
                 if any(word in caption_lower for word in keywords):
                     category = cat
                     break
@@ -263,15 +334,30 @@ class ClothesVLMAnalyzer:
         if not condition:
             condition = 'good'
         
-        # Генерируем название вещи
-        clothes_name = ''
-        if category:
-            clothes_name = category_names_ru.get(category, '')
-            if color:
-                clothes_name = f"{color} {clothes_name.lower()}"
+        if not category:
+            info_logger.warning(f"No clothing category detected in caption: {caption}")
+            return None
         
-        # Переводим описание на русский
-        description_ru = self._translate_description(caption, category, color)
+        # Генерируем название вещи с учетом рода
+        clothes_name = ''
+        meta = self.CATEGORY_METADATA.get(category, {'name': category.title(), 'gender': 'masc'})
+        noun = meta['name']
+        gender = meta.get('gender', 'masc')
+        if color:
+            adj = self._adjust_color_form(color, gender)
+            clothes_name = f"{adj} {noun.lower()}".strip()
+        else:
+            clothes_name = noun
+        if clothes_name:
+            clothes_name = clothes_name[0].upper() + clothes_name[1:]
+        
+        description_ru = self._build_russian_description(
+            caption=caption,
+            category=category,
+            color=color,
+            material=material,
+            condition=condition
+        )
         
         result = {
             'clothes_category': category,
@@ -286,99 +372,242 @@ class ClothesVLMAnalyzer:
         info_logger.info(f"Parsed caption data: {result}")
         return result
     
-    def _translate_description(self, caption: str, category: str, color: str) -> str:
-        """Перевод описания на русский - максимально улучшенный вариант"""
+    def _build_russian_description(
+        self,
+        caption: str,
+        category: str,
+        color: str,
+        material: str,
+        condition: str
+    ) -> str:
+        """Формирует развернутое описание на русском из распарсенных атрибутов."""
+        if caption in self._description_cache:
+            return self._description_cache[caption]
+        condition_names_ru = {
+            'new': 'Как новая',
+            'excellent': 'Отличное',
+            'good': 'Хорошее',
+            'satisfactory': 'Удовлетворительное'
+        }
+        meta = self.CATEGORY_METADATA.get(category, {'name': 'Предмет одежды', 'gender': 'masc'})
+        item_ru = meta['name']
+        gender = meta.get('gender', 'masc')
+        base_phrase = item_ru
+        if color:
+            base_phrase = f"{self._adjust_color_form(color, gender)} {item_ru.lower()}"
+        base_phrase = base_phrase.strip()
+        if base_phrase:
+            base_phrase = base_phrase[0].upper() + base_phrase[1:]
+        sentences = [f"{base_phrase}."] if base_phrase else []
+        if material:
+            sentences.append(f"Материал: {material}.")
+        else:
+            sentences.append("Материал: не определен.")
+        condition_ru = condition_names_ru.get(condition, 'Хорошее')
+        sentences.append(f"Состояние: {condition_ru}.")
+        rough = self._rough_translate_caption(caption, category, color)
+        if rough:
+            sentences.append(f"Доп. описание: {rough}.")
+        description = ' '.join(sentences).strip()
+        self._description_cache[caption] = description
+        return description
+    
+    def _rough_translate_caption(self, caption: str, category: str, color: str) -> str:
+        """Грубый словарный перевод английского описания на русский (оффлайн)."""
+        
+        # Проверяем кэш (можно вернуть уже готовое описание)
+        if caption in self._translation_cache:
+            return self._translation_cache[caption]
         
         result = caption.lower()
         
-        # Сложные фразы (обрабатываем первыми - от длинных к коротким)
+        # ============================================
+        # ЭТАП 0: УДАЛЕНИЕ ПРОМПТОВ И СЛУЖЕБНЫХ ФРАЗ
+        # ============================================
+        # Удаляем фрагменты промптов, которые попали в описание
+        prompt_fragments = [
+            'a detailed description of the clothing item, including its',
+            'detailed description of the clothing item, including its',
+            'a detailed description of',
+            'detailed description of',
+            'including its',
+            'the color and type of clothing in the image:',
+            'the color and type of clothing in',
+            'color and type of clothing in',
+            'in the image:',
+            'in the image',
+        ]
+        
+        for fragment in prompt_fragments:
+            result = result.replace(fragment, '')
+        
+        # ============================================
+        # ЭТАП 1: СЛОЖНЫЕ ФРАЗЫ И ПОЛНЫЕ ПРЕДЛОЖЕНИЯ
+        # ============================================
+        # Обрабатываем от самых длинных к самым коротким
         complex_phrases = {
-            # Полные предложения с контекстом
-            'a woman in a red dress walking down the street': 'женщина в красном платье идет по улице',
-            'a woman in a blue dress walking down the street': 'женщина в синем платье идет по улице',
-            'a woman in a white dress walking down the street': 'женщина в белом платье идет по улице',
-            'a woman in a black dress walking down the street': 'женщина в черном платье идет по улице',
-            'a woman wearing a red dress': 'женщина в красном платье',
-            'a woman wearing a blue dress': 'женщина в синем платье',
-            'a woman wearing a white dress': 'женщина в белом платье',
-            'a woman wearing a black dress': 'женщина в черном платье',
-            'a woman wearing a white t-shirt': 'женщина в белой футболке',
-            'a woman wearing a black t-shirt': 'женщина в черной футболке',
-            'a woman wearing a blue t-shirt': 'женщина в синей футболке',
-            'a woman wearing a red t-shirt': 'женщина в красной футболке',
-            'a woman wearing a black shirt': 'женщина в черной рубашке',
-            'a woman wearing a white shirt': 'женщина в белой рубашке',
-            'a woman wearing blue jeans': 'женщина в синих джинсах',
-            'a woman wearing black jeans': 'женщина в черных джинсах',
-            'a man wearing a black t-shirt': 'мужчина в черной футболке',
-            'a man wearing a white shirt': 'мужчина в белой рубашке',
-            'a man wearing blue jeans': 'мужчина в синих джинсах',
+            # Полные предложения с контекстом (женщины в платьях)
+            'a woman in a red dress walking down the street': 'Красное платье на женщине, идущей по улице',
+            'a woman in a blue dress walking down the street': 'Синее платье на женщине, идущей по улице',
+            'a woman in a white dress walking down the street': 'Белое платье на женщине, идущей по улице',
+            'a woman in a black dress walking down the street': 'Черное платье на женщине, идущей по улице',
+            'a woman in a pink dress walking down the street': 'Розовое платье на женщине, идущей по улице',
+            'a woman in a green dress walking down the street': 'Зеленое платье на женщине, идущей по улице',
             
-            # Составные действия
+            # Женщины в одежде (носящие)
+            'a woman wearing a red dress': 'Женщина в красном платье',
+            'a woman wearing a blue dress': 'Женщина в синем платье',
+            'a woman wearing a white dress': 'Женщина в белом платье',
+            'a woman wearing a black dress': 'Женщина в черном платье',
+            'a woman wearing a pink dress': 'Женщина в розовом платье',
+            'a woman wearing a white t-shirt': 'Женщина в белой футболке',
+            'a woman wearing a black t-shirt': 'Женщина в черной футболке',
+            'a woman wearing a blue t-shirt': 'Женщина в синей футболке',
+            'a woman wearing a red t-shirt': 'Женщина в красной футболке',
+            'a woman wearing a gray t-shirt': 'Женщина в серой футболке',
+            'a woman wearing a black shirt': 'Женщина в черной рубашке',
+            'a woman wearing a white shirt': 'Женщина в белой рубашке',
+            'a woman wearing a blue shirt': 'Женщина в синей рубашке',
+            'a woman wearing blue jeans': 'Женщина в синих джинсах',
+            'a woman wearing black jeans': 'Женщина в черных джинсах',
+            'a woman wearing white jeans': 'Женщина в белых джинсах',
+            'a woman wearing black pants': 'Женщина в черных брюках',
+            'a woman wearing a black skirt': 'Женщина в черной юбке',
+            'a woman wearing a blue skirt': 'Женщина в синей юбке',
+            
+            # Мужчины в одежде
+            'a man wearing a black t-shirt': 'Мужчина в черной футболке',
+            'a man wearing a white t-shirt': 'Мужчина в белой футболке',
+            'a man wearing a blue t-shirt': 'Мужчина в синей футболке',
+            'a man wearing a white shirt': 'Мужчина в белой рубашке',
+            'a man wearing a black shirt': 'Мужчина в черной рубашке',
+            'a man wearing blue jeans': 'Мужчина в синих джинсах',
+            'a man wearing black jeans': 'Мужчина в черных джинсах',
+            'a man wearing black pants': 'Мужчина в черных брюках',
+            
+            # Действия с предлогами
             'walking down the street': 'идет по улице',
             'walking down a street': 'идет по улице',
             'walking on the sidewalk': 'идет по тротуару',
+            'walking along the street': 'идет вдоль улицы',
             'standing in front of a wall': 'стоит перед стеной',
             'standing in front of the wall': 'стоит перед стеной',
             'standing on the sidewalk': 'стоит на тротуаре',
             'standing in a room': 'стоит в комнате',
+            'standing against a wall': 'стоит у стены',
             'sitting on a bench': 'сидит на скамейке',
             'sitting on the floor': 'сидит на полу',
+            'sitting in a chair': 'сидит на стуле',
             'posing for a photo': 'позирует для фото',
             'posing for the camera': 'позирует для камеры',
             'looking at the camera': 'смотрит в камеру',
+            'looking away from the camera': 'смотрит в сторону от камеры',
             
-            # Описания одежды с деталями
+            # Описания одежды с деталями (расширенные)
             'with black trim': 'с черной окантовкой',
             'with white trim': 'с белой окантовкой',
             'with red trim': 'с красной окантовкой',
             'with blue trim': 'с синей окантовкой',
+            'with gray trim': 'с серой окантовкой',
             'with a black collar': 'с черным воротником',
             'with a white collar': 'с белым воротником',
+            'with a blue collar': 'с синим воротником',
             'with long sleeves': 'с длинными рукавами',
             'with short sleeves': 'с короткими рукавами',
+            'with no sleeves': 'без рукавов',
             'with pockets': 'с карманами',
             'with buttons': 'с пуговицами',
             'with a zipper': 'с молнией',
+            'with a belt': 'с ремнем',
             'and black sleeves': 'и черными рукавами',
             'and white sleeves': 'и белыми рукавами',
             'and blue sleeves': 'и синими рукавами',
+            'and red sleeves': 'и красными рукавами',
             'with stripes': 'в полоску',
             'with a pattern': 'с узором',
+            'with a print': 'с принтом',
+            'with a logo': 'с логотипом',
+            'with embroidery': 'с вышивкой',
+            'with lace': 'с кружевом',
+            'with ruffles': 'с рюшами',
         }
         
         for eng, rus in sorted(complex_phrases.items(), key=lambda x: len(x[0]), reverse=True):
             result = result.replace(eng, rus)
         
-        # Средние фразы (комбинации)
+        # ============================================
+        # ЭТАП 2: СРЕДНИЕ ФРАЗЫ (КОМБИНАЦИИ СЛОВ)
+        # ============================================
         phrases = {
+            # Служебные фразы из промптов
+            'clothing item': 'предмет одежды',
+            'its color': 'цвет',
+            'its type': 'тип',
+            'its material': 'материал',
+            'its style': 'стиль',
+            'its condition': 'состояние',
+            
+            # Конструкции с глаголами
             'wearing a': 'в',
             'wearing an': 'в',
+            'wearing the': 'в',
             'walking down': 'идет по',
             'walking on': 'идет по',
+            'walking along': 'идет вдоль',
             'standing in': 'стоит в',
             'standing on': 'стоит на',
+            'standing near': 'стоит около',
+            'standing by': 'стоит у',
+            'standing against': 'стоит у',
             'sitting on': 'сидит на',
+            'sitting in': 'сидит в',
             'posing for': 'позирует для',
             'looking at': 'смотрит на',
+            
+            # Предлоги места
             'in front of': 'перед',
             'next to': 'рядом с',
             'near the': 'около',
+            'near a': 'около',
             'behind the': 'позади',
+            'behind a': 'позади',
             'inside the': 'внутри',
+            'inside a': 'внутри',
             'outside the': 'снаружи',
+            'outside a': 'снаружи',
+            'against a': 'у',
+            'against the': 'у',
+            'along the': 'вдоль',
+            'along a': 'вдоль',
         }
         
         for eng, rus in phrases.items():
             result = result.replace(eng, rus)
         
-        # Артикли (убираем раньше других слов)
+        # ============================================
+        # ЭТАП 3: АРТИКЛИ (УБИРАЕМ РАНЬШЕ ДРУГИХ СЛОВ)
+        # ============================================
         result = result.replace(' a ', ' ')
         result = result.replace(' an ', ' ')
         result = result.replace(' the ', ' ')
         
-        # Отдельные слова
+        # ============================================
+        # ЭТАП 4: ОТДЕЛЬНЫЕ СЛОВА (МАКСИМАЛЬНО ПОЛНЫЙ СЛОВАРЬ)
+        # ============================================
         words = {
+            # ===== СЛУЖЕБНЫЕ СЛОВА ИЗ ПРОМПТОВ =====
+            'detailed': 'подробный',
+            'description': 'описание',
+            'including': 'включая',
+            'condition': 'состояние',
+            'material': 'материал',
+            'type': 'тип',
+            'style': 'стиль',
+            'front': 'спереди',
+            'back': 'сзади',
+            'side': 'сбоку',
+            
+            # ===== ОСНОВНЫЕ ГРАММАТИЧЕСКИЕ ЭЛЕМЕНТЫ =====
             # Предлоги и союзы
             ' and ': ' и ',
             ' with ': ' с ',
@@ -391,35 +620,42 @@ class ClothesVLMAnalyzer:
             ' to ': ' к ',
             ' by ': ' у ',
             ' near ': ' около ',
+            ' or ': ' или ',
+            ' but ': ' но ',
+            ' as ': ' как ',
             
-            # Люди (с правильными окончаниями)
+            # ===== ЛЮДИ (С ПРАВИЛЬНЫМИ ОКОНЧАНИЯМИ) =====
             'woman': 'женщина',
             'man': 'мужчина',
             'person': 'человек',
             'people': 'люди',
             'girl': 'девушка',
-            'boy': 'юноша',
+            'boy': 'парень',
             'lady': 'дама',
             'gentleman': 'джентльмен',
             'child': 'ребенок',
             'children': 'дети',
             'adult': 'взрослый',
             'model': 'модель',
+            'male': 'мужской',
+            'female': 'женский',
             
-            # Действия (причастия и глаголы)
-            'walking': 'идущий',
-            'standing': 'стоящий',
-            'sitting': 'сидящий',
-            'wearing': 'носящий',
-            'posing': 'позирующий',
-            'looking': 'смотрящий',
-            'smiling': 'улыбающийся',
-            'holding': 'держащий',
-            'carrying': 'несущий',
-            'running': 'бегущий',
-            'jumping': 'прыгающий',
+            # ===== ДЕЙСТВИЯ (ПРИЧАСТИЯ И ГЛАГОЛЫ) =====
+            'walking': 'идущая',
+            'standing': 'стоящая',
+            'sitting': 'сидящая',
+            'wearing': 'носящая',
+            'posing': 'позирующая',
+            'looking': 'смотрящая',
+            'smiling': 'улыбающаяся',
+            'holding': 'держащая',
+            'carrying': 'несущая',
+            'running': 'бегущая',
+            'jumping': 'прыгающая',
+            'moving': 'движущаяся',
+            'dancing': 'танцующая',
             
-            # Места и окружение
+            # ===== МЕСТА И ОКРУЖЕНИЕ =====
             'street': 'улица',
             'sidewalk': 'тротуар',
             'road': 'дорога',
@@ -428,118 +664,253 @@ class ClothesVLMAnalyzer:
             'room': 'комната',
             'store': 'магазин',
             'shop': 'магазин',
+            'mall': 'торговый центр',
             'building': 'здание',
             'house': 'дом',
             'wall': 'стена',
             'floor': 'пол',
+            'ground': 'земля',
             'ceiling': 'потолок',
             'background': 'фон',
-            'outdoor': 'улица',
-            'outdoors': 'улица',
-            'indoors': 'помещение',
+            'outdoor': 'на улице',
+            'outdoors': 'на улице',
+            'indoors': 'в помещении',
+            'inside': 'внутри',
+            'outside': 'снаружи',
             'park': 'парк',
             'garden': 'сад',
             'bench': 'скамейка',
+            'chair': 'стул',
+            'sofa': 'диван',
             
-            # Одежда - специфичные комбинации (цвет + предмет)
+            # ===== ОДЕЖДА - ЦВЕТ + ПРЕДМЕТ (ПОЛНЫЕ КОМБИНАЦИИ) =====
+            # Футболки всех цветов
             'white t-shirt': 'белая футболка',
             'black t-shirt': 'черная футболка',
             'blue t-shirt': 'синяя футболка',
             'red t-shirt': 'красная футболка',
             'gray t-shirt': 'серая футболка',
+            'grey t-shirt': 'серая футболка',
             'green t-shirt': 'зеленая футболка',
+            'yellow t-shirt': 'желтая футболка',
+            'pink t-shirt': 'розовая футболка',
+            'purple t-shirt': 'фиолетовая футболка',
+            'orange t-shirt': 'оранжевая футболка',
+            
+            # Рубашки всех цветов
             'white shirt': 'белая рубашка',
             'black shirt': 'черная рубашка',
             'blue shirt': 'синяя рубашка',
             'red shirt': 'красная рубашка',
+            'gray shirt': 'серая рубашка',
+            'grey shirt': 'серая рубашка',
+            'green shirt': 'зеленая рубашка',
+            'pink shirt': 'розовая рубашка',
+            'purple shirt': 'фиолетовая рубашка',
+            
+            # Джинсы всех цветов
             'blue jeans': 'синие джинсы',
             'black jeans': 'черные джинсы',
             'white jeans': 'белые джинсы',
+            'gray jeans': 'серые джинсы',
+            'grey jeans': 'серые джинсы',
+            'light blue jeans': 'голубые джинсы',
+            'dark blue jeans': 'темно-синие джинсы',
+            
+            # Платья всех цветов
             'red dress': 'красное платье',
             'blue dress': 'синее платье',
             'white dress': 'белое платье',
             'black dress': 'черное платье',
             'pink dress': 'розовое платье',
             'green dress': 'зеленое платье',
+            'yellow dress': 'желтое платье',
+            'purple dress': 'фиолетовое платье',
+            'orange dress': 'оранжевое платье',
+            
+            # Брюки всех цветов
             'black pants': 'черные брюки',
             'white pants': 'белые брюки',
             'gray pants': 'серые брюки',
+            'grey pants': 'серые брюки',
+            'blue pants': 'синие брюки',
+            'beige pants': 'бежевые брюки',
+            'khaki pants': 'брюки цвета хаки',
+            
+            # Юбки всех цветов
             'black skirt': 'черная юбка',
             'white skirt': 'белая юбка',
             'red skirt': 'красная юбка',
+            'blue skirt': 'синяя юбка',
+            'pink skirt': 'розовая юбка',
+            'gray skirt': 'серая юбка',
+            'grey skirt': 'серая юбка',
+            
+            # Куртки/пиджаки всех цветов
             'black jacket': 'черная куртка',
             'blue jacket': 'синяя куртка',
+            'brown jacket': 'коричневая куртка',
+            'gray jacket': 'серая куртка',
+            'grey jacket': 'серая куртка',
             'leather jacket': 'кожаная куртка',
             'denim jacket': 'джинсовая куртка',
+            'jean jacket': 'джинсовая куртка',
             
-            # Одежда - общее (виды)
+            # ===== ОДЕЖДА - ОБЩИЕ ВИДЫ =====
+            # Верхняя часть
             't-shirt': 'футболка',
             't - shirt': 'футболка',
             'tshirt': 'футболка',
             'tee shirt': 'футболка',
             'tee': 'футболка',
             'tank top': 'майка',
+            'tanktop': 'майка',
+            'camisole': 'топ на бретельях',
             'shirt': 'рубашка',
             'blouse': 'блузка',
             'top': 'топ',
+            'crop top': 'укороченный топ',
+            'tube top': 'топ-бандо',
+            'sweater': 'свитер',
+            'pullover': 'пуловер',
+            'hoodie': 'толстовка с капюшоном',
+            'sweatshirt': 'толстовка',
+            'cardigan': 'кардиган',
+            'blazer': 'пиджак',
+            'suit jacket': 'пиджак',
+            'vest': 'жилет',
+            
+            # Нижняя часть
             'jeans': 'джинсы',
             'denim pants': 'джинсы',
-            'denim': 'джинса',
-            'dress': 'платье',
-            'gown': 'платье',
+            'denim': 'джинсовый',
             'pants': 'брюки',
             'trousers': 'брюки',
-            'skirt': 'юбка',
+            'slacks': 'брюки',
             'shorts': 'шорты',
+            'skirt': 'юбка',
+            'mini skirt': 'мини-юбка',
+            'maxi skirt': 'макси-юбка',
+            'midi skirt': 'миди-юбка',
+            'leggings': 'леггинсы',
+            'tights': 'колготки',
+            
+            # Платья и комбинезоны
+            'dress': 'платье',
+            'gown': 'вечернее платье',
+            'sundress': 'сарафан',
+            'maxi dress': 'длинное платье',
+            'mini dress': 'короткое платье',
+            'midi dress': 'платье средней длины',
+            'jumpsuit': 'комбинезон',
+            'romper': 'ромпер',
+            'overall': 'комбинезон',
+            
+            # Верхняя одежда
             'jacket': 'куртка',
             'coat': 'пальто',
             'overcoat': 'пальто',
-            'blazer': 'пиджак',
-            'suit jacket': 'пиджак',
-            'sweater': 'свитер',
-            'pullover': 'пуловер',
-            'hoodie': 'толстовка',
-            'sweatshirt': 'толстовка',
-            'cardigan': 'кардиган',
-            'vest': 'жилет',
-            'leggings': 'леггинсы',
-            'stockings': 'чулки',
-            'socks': 'носки',
-            'shoes': 'туфли',
+            'trench coat': 'тренч',
+            'raincoat': 'плащ',
+            'parka': 'парка',
+            'windbreaker': 'ветровка',
+            'bomber jacket': 'бомбер',
+            
+            # Обувь
+            'shoes': 'обувь',
             'boots': 'ботинки',
+            'ankle boots': 'ботильоны',
             'sneakers': 'кроссовки',
+            'trainers': 'кроссовки',
             'sandals': 'сандалии',
-            'heels': 'каблуки',
+            'heels': 'туфли на каблуке',
+            'high heels': 'высокие каблуки',
+            'flats': 'балетки',
+            'loafers': 'лоферы',
+            'slippers': 'тапочки',
+            
+            # Аксессуары
             'scarf': 'шарф',
             'hat': 'шляпа',
             'cap': 'кепка',
-            'beanie': 'шапка',
+            'beanie': 'вязаная шапка',
             'gloves': 'перчатки',
             'tie': 'галстук',
+            'bow tie': 'бабочка',
+            'belt': 'ремень',
+            'bag': 'сумка',
+            'purse': 'сумочка',
+            'backpack': 'рюкзак',
+            'watch': 'часы',
+            'glasses': 'очки',
+            'sunglasses': 'солнцезащитные очки',
+            'jewelry': 'украшения',
+            'necklace': 'ожерелье',
+            'bracelet': 'браслет',
+            'earrings': 'серьги',
+            'ring': 'кольцо',
             
-            # Цвета (расширенные варианты)
+            # ===== ЦВЕТА (ПОЛНЫЙ СПЕКТР) =====
+            # Оттенки синего
             'light blue': 'голубой',
             'sky blue': 'небесно-голубой',
+            'baby blue': 'нежно-голубой',
             'dark blue': 'темно-синий',
             'navy blue': 'темно-синий',
             'navy': 'темно-синий',
             'bright blue': 'ярко-синий',
             'pale blue': 'бледно-голубой',
+            'royal blue': 'королевский синий',
+            'cobalt blue': 'кобальтово-синий',
+            
+            # Оттенки красного
             'dark red': 'темно-красный',
             'bright red': 'ярко-красный',
+            'light red': 'светло-красный',
             'burgundy': 'бордовый',
             'maroon': 'бордовый',
             'crimson': 'малиновый',
+            'scarlet': 'алый',
+            'cherry red': 'вишневый',
+            
+            # Оттенки зеленого
             'dark green': 'темно-зеленый',
             'light green': 'светло-зеленый',
             'olive green': 'оливковый',
             'olive': 'оливковый',
             'lime green': 'салатовый',
+            'lime': 'лаймовый',
+            'forest green': 'лесной зеленый',
+            'mint green': 'мятный',
+            'emerald green': 'изумрудный',
+            
+            # Оттенки серого
             'light gray': 'светло-серый',
+            'light grey': 'светло-серый',
             'dark gray': 'темно-серый',
+            'dark grey': 'темно-серый',
             'charcoal': 'угольно-серый',
+            'slate gray': 'грифельно-серый',
             'silver': 'серебристый',
-            'gold': 'золотой',
+            
+            # Оттенки розового
+            'hot pink': 'ярко-розовый',
+            'light pink': 'светло-розовый',
+            'dark pink': 'темно-розовый',
+            'fuchsia': 'фуксия',
+            'coral': 'коралловый',
+            'salmon': 'лососевый',
+            'rose': 'розовый',
+            
+            # Оттенки коричневого
+            'light brown': 'светло-коричневый',
+            'dark brown': 'темно-коричневый',
+            'chocolate brown': 'шоколадно-коричневый',
+            'tan': 'бежевый',
+            'camel': 'верблюжий',
+            'chestnut': 'каштановый',
+            
+            # Основные цвета
             'red': 'красный',
             'blue': 'синий',
             'white': 'белый',
@@ -547,60 +918,95 @@ class ClothesVLMAnalyzer:
             'green': 'зеленый',
             'yellow': 'желтый',
             'pink': 'розовый',
-            'hot pink': 'ярко-розовый',
             'gray': 'серый',
             'grey': 'серый',
             'brown': 'коричневый',
-            'tan': 'бежевый',
             'purple': 'фиолетовый',
             'violet': 'фиолетовый',
             'lavender': 'лавандовый',
+            'lilac': 'сиреневый',
             'orange': 'оранжевый',
             'beige': 'бежевый',
             'cream': 'кремовый',
-            'ivory': 'слоновая кость',
+            'ivory': 'цвета слоновой кости',
             'khaki': 'хаки',
             'turquoise': 'бирюзовый',
+            'teal': 'сине-зеленый',
             'cyan': 'голубой',
             'magenta': 'пурпурный',
-            'multicolored': 'разноцветный',
-            'colorful': 'яркий',
+            'gold': 'золотой',
+            'bronze': 'бронзовый',
+            'copper': 'медный',
             
-            # Детали одежды (расширенные)
+            # Специальные цвета
+            'multicolored': 'разноцветный',
+            'multi-colored': 'разноцветный',
+            'colorful': 'яркий',
+            'bright': 'яркий',
+            'pale': 'бледный',
+            'dark': 'темный',
+            'light': 'светлый',
+            'pastel': 'пастельный',
+            'neon': 'неоновый',
+            'metallic': 'металлик',
+            
+            # ===== ДЕТАЛИ И ЭЛЕМЕНТЫ ОДЕЖДЫ =====
             'trimmed': 'с окантовкой',
             'trim': 'окантовка',
             'trims': 'окантовка',
             'collar': 'воротник',
             'collared': 'с воротником',
+            'v-neck': 'с V-образным вырезом',
+            'crew neck': 'с круглым вырезом',
+            'turtleneck': 'с воротником-стойкой',
+            'neckline': 'вырез',
             'sleeve': 'рукав',
             'sleeves': 'рукава',
             'long sleeve': 'длинный рукав',
             'short sleeve': 'короткий рукав',
             'sleeveless': 'без рукавов',
+            'cap sleeve': 'рукав-крылышко',
             'pocket': 'карман',
             'pockets': 'карманы',
             'button': 'пуговица',
             'buttons': 'пуговицы',
-            'buttoned': 'застегнутый',
+            'buttoned': 'на пуговицах',
+            'button-up': 'на пуговицах',
+            'button-down': 'на пуговицах',
             'zipper': 'молния',
             'zip': 'молния',
+            'zipped': 'на молнии',
             'belt': 'ремень',
             'belted': 'с ремнем',
+            'strap': 'лямка',
+            'straps': 'лямки',
             'logo': 'логотип',
             'print': 'принт',
             'printed': 'с принтом',
+            'graphic': 'с графикой',
             'pattern': 'узор',
             'patterned': 'с узором',
             'embroidered': 'вышитый',
+            'embroidery': 'вышивка',
             'lace': 'кружево',
+            'lacy': 'кружевной',
             'ruffles': 'рюши',
+            'ruffled': 'с рюшами',
             'pleated': 'плиссированный',
+            'pleats': 'складки',
+            'hem': 'подол',
+            'hemline': 'линия подола',
+            'seam': 'шов',
+            'stitching': 'строчка',
             
-            # Материалы
+            # ===== МАТЕРИАЛЫ =====
             'cotton': 'хлопок',
             'leather': 'кожа',
+            'faux leather': 'искусственная кожа',
             'wool': 'шерсть',
+            'woolen': 'шерстяной',
             'silk': 'шелк',
+            'silky': 'шелковый',
             'satin': 'атлас',
             'velvet': 'бархат',
             'linen': 'лен',
@@ -608,8 +1014,17 @@ class ClothesVLMAnalyzer:
             'synthetic': 'синтетика',
             'knit': 'трикотаж',
             'knitted': 'вязаный',
+            'cashmere': 'кашемир',
+            'suede': 'замша',
+            'canvas': 'холст',
+            'mesh': 'сетка',
+            'chiffon': 'шифон',
+            'tulle': 'тюль',
+            'fleece': 'флис',
+            'corduroy': 'вельвет',
+            'tweed': 'твид',
             
-            # Стили и узоры (расширенные)
+            # ===== СТИЛИ И УЗОРЫ =====
             'striped': 'в полоску',
             'stripy': 'в полоску',
             'checkered': 'в клетку',
@@ -617,19 +1032,34 @@ class ClothesVLMAnalyzer:
             'plaid': 'в клетку',
             'polka dot': 'в горошек',
             'dotted': 'в горошек',
+            'spotted': 'в горошек',
             'floral': 'цветочный',
             'flowered': 'в цветочек',
+            'floral print': 'цветочный принт',
             'geometric': 'геометрический',
+            'abstract': 'абстрактный',
             'plain': 'однотонный',
             'solid': 'однотонный',
             'solid color': 'однотонный',
+            'two-tone': 'двухцветный',
+            'tie-dye': 'тай-дай',
+            'camouflage': 'камуфляж',
+            'camo': 'камуфляж',
+            'animal print': 'анималистичный принт',
+            'leopard print': 'леопардовый принт',
+            'zebra print': 'принт зебры',
+            
+            # ===== СТИЛИ И ФАСОНЫ =====
             'casual': 'повседневный',
             'formal': 'официальный',
             'business': 'деловой',
+            'business casual': 'деловой кэжуал',
             'vintage': 'винтажный',
             'retro': 'ретро',
             'modern': 'современный',
+            'contemporary': 'современный',
             'classic': 'классический',
+            'traditional': 'традиционный',
             'sporty': 'спортивный',
             'athletic': 'спортивный',
             'elegant': 'элегантный',
@@ -639,26 +1069,55 @@ class ClothesVLMAnalyzer:
             'chic': 'шикарный',
             'bohemian': 'богемный',
             'boho': 'бохо',
+            'preppy': 'преппи',
+            'grunge': 'гранж',
+            'punk': 'панк',
+            'gothic': 'готический',
+            'hipster': 'хипстерский',
+            'minimalist': 'минималистичный',
+            'romantic': 'романтичный',
+            'feminine': 'женственный',
+            'masculine': 'мужественный',
+            'edgy': 'дерзкий',
+            'sophisticated': 'утонченный',
+            'glamorous': 'гламурный',
             
-            # Размер и крой
+            # ===== РАЗМЕР, КРОЙ И ПОСАДКА =====
             'fitted': 'приталенный',
             'tight': 'обтягивающий',
             'loose': 'свободный',
             'baggy': 'мешковатый',
-            'oversized': 'oversized',
+            'oversized': 'оверсайз',
+            'relaxed': 'свободный',
             'slim': 'узкий',
+            'slim fit': 'приталенный',
             'skinny': 'очень узкий',
             'wide': 'широкий',
+            'wide leg': 'с широкими штанинами',
+            'straight': 'прямой',
+            'straight leg': 'прямые',
+            'bootcut': 'с расклешенными штанинами',
+            'flared': 'расклешенный',
+            'a-line': 'А-силуэт',
             'long': 'длинный',
             'short': 'короткий',
+            'cropped': 'укороченный',
+            'midi': 'миди',
             'mini': 'мини',
             'maxi': 'макси',
-            'midi': 'миди',
+            'knee-length': 'до колена',
+            'ankle-length': 'до щиколотки',
+            'floor-length': 'в пол',
+            'high-waisted': 'с высокой талией',
+            'low-rise': 'с заниженной талией',
+            'mid-rise': 'со средней посадкой',
             
-            # Состояние
+            # ===== СОСТОЯНИЕ И КАЧЕСТВО =====
             'new': 'новый',
+            'brand new': 'совершенно новый',
             'old': 'старый',
             'worn': 'поношенный',
+            'used': 'б/у',
             'clean': 'чистый',
             'dirty': 'грязный',
             'stained': 'испачканный',
@@ -666,49 +1125,158 @@ class ClothesVLMAnalyzer:
             'ironed': 'глаженый',
             'torn': 'порванный',
             'ripped': 'порванный',
+            'damaged': 'поврежденный',
             'faded': 'выцветший',
+            'distressed': 'с эффектом потертости',
+            'perfect': 'идеальный',
+            'excellent': 'отличный',
+            'good': 'хороший',
+            'fair': 'удовлетворительный',
+            'poor': 'плохой',
             
-            # Погода и сезон
+            # ===== ОПИСАТЕЛЬНЫЕ ПРИЛАГАТЕЛЬНЫЕ =====
+            'beautiful': 'красивый',
+            'pretty': 'симпатичный',
+            'nice': 'приятный',
+            'cute': 'милый',
+            'lovely': 'прелестный',
+            'gorgeous': 'великолепный',
+            'stunning': 'потрясающий',
+            'attractive': 'привлекательный',
+            'simple': 'простой',
+            'basic': 'базовый',
+            'fancy': 'нарядный',
+            'comfortable': 'удобный',
+            'cozy': 'уютный',
+            'warm': 'теплый',
+            'cool': 'прохладный',
+            'soft': 'мягкий',
+            'smooth': 'гладкий',
+            'rough': 'грубый',
+            'thick': 'толстый',
+            'thin': 'тонкий',
+            'lightweight': 'легкий',
+            'heavy': 'тяжелый',
+            
+            # ===== ПОГОДА И СЕЗОН =====
             'summer': 'летний',
             'winter': 'зимний',
             'spring': 'весенний',
             'fall': 'осенний',
             'autumn': 'осенний',
-            'warm': 'теплый',
-            'cold': 'холодный',
+            'seasonal': 'сезонный',
             
-            # Другое
+            # ===== ФОТО И ПРОЧЕЕ =====
             'photo': 'фото',
-            'picture': 'фотография',
+            'photograph': 'фотография',
+            'picture': 'изображение',
             'image': 'изображение',
             'camera': 'камера',
             'photography': 'фотография',
             'outfit': 'наряд',
+            'look': 'образ',
+            'ensemble': 'ансамбль',
             'clothing': 'одежда',
             'clothes': 'одежда',
             'apparel': 'одежда',
             'garment': 'предмет одежды',
+            'item': 'предмет',
+            'piece': 'вещь',
             'style': 'стиль',
             'fashion': 'мода',
+            'design': 'дизайн',
+            'quality': 'качество',
+            'condition': 'состояние',
+            'size': 'размер',
+            'fit': 'посадка',
+            'color': 'цвет',
+            'colour': 'цвет',
+            'material': 'материал',
+            'fabric': 'ткань',
+            'texture': 'текстура',
+            'detail': 'деталь',
+            'details': 'детали',
+            'feature': 'особенность',
+            'features': 'особенности',
         }
         
         for eng, rus in words.items():
             result = result.replace(eng, rus)
         
+        # ============================================
+        # ЭТАП 5: ОЧИСТКА И ФОРМАТИРОВАНИЕ
+        # ============================================
         # Убираем множественные пробелы
         while '  ' in result:
             result = result.replace('  ', ' ')
         
-        # Убираем пробелы перед точками и запятыми
-        result = result.replace(' ,', ',').replace(' .', '.')
+        # Убираем пробелы перед пунктуацией
+        result = result.replace(' ,', ',')
+        result = result.replace(' .', '.')
+        result = result.replace(' :', ':')
+        result = result.replace(' ;', ';')
+        result = result.replace(' !', '!')
+        result = result.replace(' ?', '?')
         
+        # Убираем лишние пробелы в начале и конце
         result = result.strip()
         
         # Первая буква заглавная
         if result:
             result = result[0].upper() + result[1:]
         
-        return result
+        # Если описание получилось слишком коротким или неполным, 
+        # создаем более информативное описание на русском
+        if len(result) < 15 or not any(char.isalpha() for char in result):
+            # Формируем описание из известных данных
+            description_parts = []
+            
+            if color:
+                description_parts.append(color)
+            
+            if category:
+                category_names = {
+                    'jeans': 'джинсы',
+                    'dress': 'платье',
+                    'shirt': 'рубашка',
+                    't-shirt': 'футболка',
+                    'pants': 'брюки',
+                    'skirt': 'юбка',
+                    'jacket': 'куртка',
+                    'shoes': 'обувь',
+                }
+                if category in category_names:
+                    description_parts.append(category_names[category])
+            
+            if description_parts:
+                result = ' '.join(description_parts)
+                # Добавляем стандартное начало для полноты
+                result = f"Предмет одежды: {result}"
+            else:
+                result = "Предмет одежды"
+        
+            self._translation_cache[caption] = result
+            return result
+
+    def _adjust_color_form(self, color: str, gender: str) -> str:
+        """Возвращает цвет в нужном роде/числе для согласования с предметом."""
+        if not color:
+            return color
+        forms = self.COLOR_FORMS.get(color)
+        if forms:
+            return forms.get(gender, forms.get('masc', color))
+        lower_color = color.lower()
+        replacements = {
+            'fem': [('ый', 'ая'), ('ой', 'ая'), ('ий', 'яя')],
+            'neut': [('ый', 'ое'), ('ой', 'ое'), ('ий', 'ее')],
+            'pl': [('ый', 'ые'), ('ой', 'ые'), ('ий', 'ие')]
+        }
+        for old, new in replacements.get(gender, []):
+            if lower_color.endswith(old):
+                return color[:-len(old)] + new
+        if gender == 'pl' and lower_color.endswith('ыйх'):
+            return color[:-3] + 'ых'
+        return color
 
 
 # Глобальный экземпляр анализатора

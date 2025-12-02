@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+WORKDIR /app
+
+COPY requirements.web.txt ./
+RUN pip install --no-cache-dir -r requirements.web.txt
+
+COPY src ./src
+COPY templates ./templates
+COPY static ./static
+RUN mkdir -p /app/data
+
+ENV FLASK_APP=src/run.py
+ENV VLM_API_URL=http://vlm:8001/analyze
+
+EXPOSE 5000
+
+CMD ["python", "src/run.py"]

@@ -679,6 +679,9 @@
                                 alert('✅ Изображение проанализировано!\n\nЗаполнено полей: ' + filled.length + '\nПроверьте форму!');
                             }, 300);
                         }
+                    } else if (result.success === false) {
+                        const message = result.message || 'Не удалось обработать изображение. Введите данные самостоятельно.';
+                        alert('⚠️ ' + message);
                     } else if (result.warning) {
                         console.log('Предупреждение:', result.warning);
                     } else {

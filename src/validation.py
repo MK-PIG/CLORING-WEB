@@ -104,8 +104,9 @@ class Validator:
         Returns:
             bool: Возвращает True если бренд корректен, False в ином случае
         """
-        if not clothes_brand:
-            return True
+        if not clothes_brand or not clothes_brand.strip():
+            er_logger.error("Clothes brand is required")
+            return False
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и спец символы
@@ -127,8 +128,9 @@ class Validator:
         Returns:
             bool: Возвращает True если материал корректен, False в ином случае
         """
-        if not clothes_material:
-            return True
+        if not clothes_material or not clothes_material.strip():
+            er_logger.error("Clothes material is required")
+            return False
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и %
@@ -150,8 +152,9 @@ class Validator:
         Returns:
             bool: Возвращает True если цвет корректен, False в ином случае
         """
-        if not clothes_color:
-            return True
+        if not clothes_color or not clothes_color.strip():
+            er_logger.error("Clothes color is required")
+            return False
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и дефисы
@@ -174,8 +177,9 @@ class Validator:
         Returns:
             bool: Возвращает True если описание корректно, False в ином случае
         """
-        if not clothes_description:
-            return True
+        if not clothes_description or not clothes_description.strip():
+            er_logger.error("Clothes description is required")
+            return False
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и дефисы

@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+WORKDIR /app
+
+COPY requirements.vlm.txt ./
+RUN pip install --no-cache-dir -r requirements.vlm.txt
+
+COPY src ./src
+COPY vlm_service ./vlm_service
+
+RUN mkdir -p /app/data
+
+ENV PORT=8001 \
+    VLM_UPLOAD_DIR=/tmp/vlm_uploads
+
+EXPOSE 8001
+
+CMD ["python", "vlm_service/app.py"]

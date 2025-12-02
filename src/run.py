@@ -1,11 +1,10 @@
 from flask import Flask, jsonify, render_template, url_for, request, session, redirect, abort
-from werkzeug.utils import secure_filename
 from src.registration import Registartor
 from src.db import DateBase
 from src.autotentification import Autotentificator
 from src.validation import Validator
 from src.constants import VALIDATOR_FUNC
-from src.vlm_analyzer import get_analyzer
+from src.ai_client import AIAnalyzerClient
 import os
 import secrets
 from src.logger import (info_logger, er_logger)
@@ -27,11 +26,15 @@ app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', secrets.token_hex(16))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['DATABASE_PATH'] = DATABASE_PATH
+app.config['VLM_API_URL'] = os.environ.get(
+    'VLM_API_URL', 'http://localhost:8001/analyze')
 
 base.create_users_table()
 base.create_table_users_items()
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
+
+ai_client = AIAnalyzerClient(app.config['VLM_API_URL'])
 
 
 @app.route('/sign_in', methods=['GET', 'POST'])
@@ -419,37 +422,9 @@ def analyze_clothes_image():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No selected file'}), 400
         
-        # Сохраняем временный файл
-        filename = secure_filename(file.filename)  # type: ignore
-        temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f'temp_{filename}')
-        file.save(temp_path)
-        
-        info_logger.info(f"Analyzing image: {temp_path}")
-        
-        # Получаем анализатор и анализируем изображение
-        info_logger.info("Getting VLM analyzer instance...")
-        analyzer = get_analyzer()
-        
-        # analyze_image сам загрузит модель при первом вызове
-        info_logger.info("Starting image analysis...")
-        analysis_result = analyzer.analyze_image(temp_path)
-        info_logger.info(f"Analysis result: {analysis_result}")
-        
-        # ВРЕМЕННО: если модель не вернула результат, используем тестовые данные
-        if not analysis_result:
-            info_logger.warning("No result from VLM, using test data")
-            analysis_result = {
-                'clothes_category': 'jeans',
-                'clothes_color': 'Синий',
-                'clothes_material': 'Деним',
-                'clothes_brand': '',
-                'clothes_description': 'Синие джинсы'
-            }
-        
-        # Удаляем временный файл
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
-        
+        info_logger.info("Forwarding image to VLM service")
+        analysis_result, error_message = ai_client.analyze(file)
+
         if analysis_result:
             info_logger.info(f"Image analysis successful: {analysis_result}")
             return jsonify({
@@ -459,14 +434,11 @@ def analyze_clothes_image():
         else:
             return jsonify({
                 'success': False,
-                'error': 'Failed to analyze image'
-            }), 500
+                'message': error_message or 'Не удалось распознать одежду. Введите данные самостоятельно.'
+            })
             
     except Exception as e:
         er_logger.error(f"Error in analyze_clothes_image: {str(e)}")
-        # Убираем временный файл в случае ошибки
-        if 'temp_path' in locals() and os.path.exists(temp_path):
-            os.remove(temp_path)
         return jsonify({
             'success': False,
             'error': str(e)

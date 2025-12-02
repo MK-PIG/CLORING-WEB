@@ -570,7 +570,8 @@
             const addItemForm = document.getElementById('add-item-form');
 
             // Открытие диалога выбора файла
-            uploadBtn.addEventListener('click', function () {
+            uploadBtn.addEventListener('click', function (event) {
+                event.stopPropagation();
                 photoInput.click();
             });
 

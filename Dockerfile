@@ -32,7 +32,7 @@ USER webuser
 
 EXPOSE 5000
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=600s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000'); print('ok')" || exit 1
 
 CMD ["python","src/run.py"]

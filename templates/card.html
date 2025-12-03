@@ -110,6 +110,18 @@
             border: 1px solid #88a998;
         }
 
+        .btn-register {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
+        .btn-profile {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
         .btn-back {
             background-color: transparent;
             color: #88a998;
@@ -355,11 +367,14 @@
             <div class="auth-buttons">
                 <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
                     class="btn btn-support">Поддержать проект</button>
-                <a href="{{url_for('catalog')}}" class="btn btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                    Назад в каталог
-                </a>
-                <a href="{{url_for('logout')}}" class="btn btn-login">Выйти</a>
+
+                {% if not email%}
+                <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
+                <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
+                {% else %}
+                <a href="{{url_for('profile',email=email)}}" class="btn btn-profile"><i class="fas fa-user"></i>
+                    Профиль</a>
+                {% endif %}
             </div>
         </div>
     </header>

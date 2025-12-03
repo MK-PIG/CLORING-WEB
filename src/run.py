@@ -328,7 +328,7 @@ def card(user_id: str, item_id: str):
     """
     try:
 
-        LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', ' clothes_size',
+        LIST_ITEMS_KEYS = ['clothes_name', 'clothes_category', 'clothes_size',
                            'clothes_condition', 'clothes_brand', 'clothes_material', 'clothes_color', 'clothes_description', 'clothes_link_to_photo']
 
         result_select_item = base.select(
@@ -342,6 +342,7 @@ def card(user_id: str, item_id: str):
             'phone_number', 'users', f'user_id="{user_id}"')
         phone_number = result_select_phone_number[0][0] if result_select_phone_number else "Нет"
         info_logger.info(f"User {email} visited card page")
+        print(item_dict)
         return render_template("card.html", item_dict=item_dict, email=email, phone_number=phone_number)
     except Exception as e:
         er_logger.error(f"ERROR: from card {e}")
@@ -402,4 +403,4 @@ def about():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)

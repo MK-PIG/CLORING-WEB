@@ -111,6 +111,18 @@
             border: 1px solid #88a998;
         }
 
+        .btn-register {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
+        .btn-profile {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
         .btn-primary {
             background-color: #f78659;
             color: white;
@@ -393,10 +405,12 @@
         }
 
         .footer-content {
-            width: 90%;
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             text-align: center;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         /* адаптивность */
@@ -464,6 +478,7 @@
                 <ul>
                     <li><a href="{{url_for('main')}}">Главная</a></li>
                     <li><a href="{{url_for('catalog')}}">Каталог</a></li>
+                    <li><a href="{{url_for('about')}}">О нас</a></li>
                 </ul>
             </nav>
 
@@ -472,7 +487,14 @@
             <div class="auth-buttons">
                 <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
                     class="btn btn-support">Поддержать проект</button>
-                <a href="{{url_for('logout')}}" class="btn btn-login">Выйти</a>
+
+                {% if not email%}
+                <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
+                <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
+                {% else %}
+                <a href="{{url_for('profile',email=email)}}" class="btn btn-profile"><i class="fas fa-user"></i>
+                    Профиль</a>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -575,18 +597,25 @@
                             <label class="form-label" for="item-size">Размер *</label>
                             <select class="form-select" id="item-size" name="clothes_size" required>
                                 <option value="">Выберите размер</option>
-                                <option value="xs">XS</option>
-                                <option value="s">S</option>
-                                <option value="m">M</option>
-                                <option value="l">L</option>
-                                <option value="xl">XL</option>
-                                <option value="xxl">XXL</option>
-                                <option value="36">36</option>
-                                <option value="38">38</option>
-                                <option value="40">40</option>
-                                <option value="42">42</option>
-                                <option value="44">44</option>
-                                <option value="46">46</option>
+                                <option value="xxs">XXS - 40(RU) - 6(USA) - 34(EU)</option>
+                                <option value="xs">XS - 42(RU) - 8(USA) - 36(EU)</option>
+                                <option value="s">S - 44(RU) - 10(USA) - 38(EU)</option>
+                                <option value="m">M - 46(RU) - 12(USA) - 40(EU)</option>
+                                <option value="l">L - 48-50(RU) - 14-16(USA) - 42-44</option>
+                                <option value="xl">XL - 52-54(RU) - 18-20(USA) - 46-48(EU)</option>
+                                <option value="xxl">XXL - 56(RU) - 22(USA) - 50(EU)</option>
+                                <option value="3xl">3XL - 58(RU) - 24(USA) - 52(EU)</option>
+                                <option value="4xl">4XL - 60(RU) - 26(USA) - 54(EU)</option>
+                                <option value="36">36(RU) - 5(USA) - 37(EU)</option>
+                                <option value="37">37(RU) - 6(USA) - 38(EU)</option>
+                                <option value="38">38(RU) - 7(USA) - 39(EU)</option>
+                                <option value="39">39(RU) - 8(USA) - 40(EU)</option>
+                                <option value="40">40(RU) - 9(USA) - 41(EU)</option>
+                                <option value="41">41(RU) - 10(USA) - 42(EU)</option>
+                                <option value="42">42(RU) - 11(USA) - 43(EU)</option>
+                                <option value="43">43(RU) - 12(USA) - 44(EU)</option>
+                                <option value="44">44(RU) - 13(USA) - 45(EU)</option>
+                                <option value="45">45(RU) - 14(USA) - 46(EU)</option>
                             </select>
                         </div>
                     </div>

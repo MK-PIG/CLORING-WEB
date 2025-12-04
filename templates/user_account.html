@@ -113,6 +113,13 @@
             border: 1px solid #2e8b57;
         }
 
+        .btn-profile {
+            background-color: #88a998;
+            color: #ffffff;
+            border: 1px solid #88a998;
+            text-decoration: none;
+        }
+
 
         .btn-primary {
             background-color: #88a998;
@@ -127,6 +134,15 @@
             opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-buttons .btn-profile:link,
+        .auth-buttons .btn-profile:visited,
+        .auth-buttons .btn-profile:hover,
+        .auth-buttons .btn-profile:active {
+            background-color: #88a998;
+            color: #ffffff;
+            border: 1px solid #88a998;
         }
 
         /* основной баннер */
@@ -390,10 +406,12 @@
         }
 
         .footer-content {
-            width: 90%;
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             text-align: center;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         /* адаптивность */

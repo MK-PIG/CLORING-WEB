@@ -111,6 +111,18 @@
             border: 1px solid #88a998;
         }
 
+        .btn-register {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
+        .btn-profile {
+            background-color: #88a998;
+            color: white;
+            border: 1px solid #88a998;
+        }
+
         .btn-primary {
             background-color: #88a998;
             color: white;
@@ -318,10 +330,12 @@
         }
 
         .footer-content {
-            width: 90%;
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             text-align: center;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         /* адаптивность */
@@ -374,6 +388,7 @@
                 <ul>
                     <li><a href="{{url_for('main')}}">Главная</a></li>
                     <li><a href="{{url_for('catalog')}}">Каталог</a></li>
+                    <li><a href="{{url_for('about')}}">О нас</a></li>
                 </ul>
             </nav>
 
@@ -382,7 +397,14 @@
             <div class="auth-buttons">
                 <button onclick="window.location.href='https://www.tbank.ru/rm/r_RMOvfgICkd.eCZlKLNRvJ/uagqG93443/'"
                     class="btn btn-support">Поддержать проект</button>
-                <a href="{{url_for('logout')}}" class="btn btn-login">Выйти</a>
+
+                {% if not email%}
+                <a href="{{url_for('sign_in')}}" class="btn btn-login">Войти</a>
+                <a href="{{url_for('registration')}}" class="btn btn-register">Регистрация</a>
+                {% else %}
+                <a href="{{url_for('profile',email=email)}}" class="btn btn-profile"><i class="fas fa-user"></i>
+                    Профиль</a>
+                {% endif %}
             </div>
         </div>
     </header>

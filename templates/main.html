@@ -453,8 +453,12 @@
                     планета без отходов</span></h1>
             <p>Платформа для обмена одеждой, где ваш стиль помогает сохранить планету</p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Начать обмен</a>
-                <a href="#" class="btn btn-secondary">Узнать больше</a>
+                {% if email %}
+                <a href="{{url_for('profile', email=email)}}" class="btn btn-primary">Начать обмен</a>
+                {% else %}
+                <a href="{{url_for('registration')}}" class="btn btn-primary">Начать обмен</a>
+                {% endif %}
+                <a href="{{url_for('about')}}" class="btn btn-secondary">Узнать больше</a>
             </div>
         </div>
     </section>

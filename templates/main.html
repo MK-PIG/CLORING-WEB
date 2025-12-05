@@ -332,20 +332,47 @@
 
         /* адаптивность для других устройств */
         @media (max-width: 768px) {
+            header {
+                padding: 8px 0;
+            }
+
             .container {
                 flex-direction: column;
                 text-align: center;
+                padding: 0 10px;
             }
 
             .logo {
                 position: static;
                 transform: none;
-                margin-bottom: 10px;
+                margin-bottom: 5px;
+                font-size: 20px;
             }
 
             nav ul {
-                margin-bottom: 15px;
+                margin-bottom: 8px;
                 justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav ul li {
+                margin-right: 10px;
+                font-size: 13px;
+            }
+
+            nav ul li a {
+                font-size: 13px;
+            }
+
+            .auth-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .btn {
+                margin: 3px;
+                padding: 6px 10px;
+                font-size: 11px;
             }
 
             .hero {
@@ -453,8 +480,12 @@
                     планета без отходов</span></h1>
             <p>Платформа для обмена одеждой, где ваш стиль помогает сохранить планету</p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Начать обмен</a>
-                <a href="#" class="btn btn-secondary">Узнать больше</a>
+                {% if email %}
+                <a href="{{url_for('profile', email=email)}}" class="btn btn-primary">Начать обмен</a>
+                {% else %}
+                <a href="{{url_for('registration')}}" class="btn btn-primary">Начать обмен</a>
+                {% endif %}
+                <a href="{{url_for('about')}}" class="btn btn-secondary">Узнать больше</a>
             </div>
         </div>
     </section>

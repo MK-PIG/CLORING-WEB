@@ -132,7 +132,7 @@ class Validator:
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и %
-        pattern = r'^[a-zA-Zа-яёА-ЯЁ0-9][a-zA-Zа-яёА-ЯЁ0-9\s%]*$'
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ0-9][a-zA-Zа-яёА-ЯЁ0-9\s%,.]*$'
 
         if not re.match(pattern, clothes_material):
             er_logger.error(
@@ -156,7 +156,7 @@ class Validator:
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и дефисы
-        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-]*$'
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-,.]*$'
         if not re.match(pattern, clothes_color):
             er_logger.error(
                 f"Incorrect format of clothes_color: {clothes_color}")
@@ -180,7 +180,7 @@ class Validator:
 
         # Проверяем, что строка начинается с буквы и содержит только русские и латинские буквы,
         # пробелы (не в начале) и дефисы
-        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ\s\-.]*$'
+        pattern = r'^[a-zA-Zа-яёА-ЯЁ][a-zA-Zа-яёА-ЯЁ0-9\s\-.,]*$'
         if not re.match(pattern, clothes_description):
             er_logger.error(
                 f"Incorrect format of clothes_description: {clothes_description}")
